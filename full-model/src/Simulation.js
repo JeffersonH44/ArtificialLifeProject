@@ -70,7 +70,7 @@ class Simulation {
             },
         ];
 
-        for(var i = 0; i < nodes; ++i)
+        for(var i = 0; i < nodes; ++i) {
             var currentNode = node[i];
             var row = Utils.randomInt(currentNode.startRow, currentNode.endRow);
             var col = Utils.randomInt(currentNode.startCol, currentNode.endCol);
