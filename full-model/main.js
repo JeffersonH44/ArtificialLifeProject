@@ -5,8 +5,8 @@ var config = {
         "numZebras": 30,
         "numLeopards": 0,
         "foodNodes": 2,
-        "rows": 100,
-        "cols": 100,
+        "rows": 10,
+        "cols": 10,
         "boxSize": 40
     },
     "zebra": {
