@@ -2,11 +2,11 @@
 
 var config = {
     "general": {
-        "numZebras": 25,
-        "numLeopards": 7,
+        "numZebras": 30,
+        "numLeopards": 0,
         "foodNodes": 2,
-        "rows": 10,
-        "cols": 10,
+        "rows": 100,
+        "cols": 100,
         "boxSize": 40
     },
     "zebra": {

@@ -33,6 +33,7 @@ class Simulation {
             }
         }
 
+        console.log("ho");
         this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
         this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
         this.generateTrees(generalConfig.foodNodes, config.tree);
@@ -167,7 +168,7 @@ class Simulation {
 
         this.scene.add(this.camera);
 
-        this.camera.position.z = 300;
+        this.camera.position.z = 1000;
 
         this.renderer.setSize(width, height);
 
@@ -180,6 +181,8 @@ class Simulation {
         var grid = new THREE.Mesh(
             new THREE.PlaneGeometry(width, height, size, size),
             basicMaterial);
+        grid.translateX(width / 2);
+        grid.translateY(height / 2);
         //sphere.position.x = 100;
         this.scene.add(grid);
 
@@ -207,6 +210,5 @@ class Simulation {
             Simulation.startSimulation(simulation);
         });
         simulation.show();
-        console.log("hello");
     }
 }
