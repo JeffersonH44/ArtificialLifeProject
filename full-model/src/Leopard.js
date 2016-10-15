@@ -1,6 +1,6 @@
 'use strict';
 
 class Leopard {
-    constructor(ctx, config) {
+    constructor(scene, config, row, col) {
     }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
 class Tree {
-    constructor(ctx, config) {
+    constructor(scene, config) {
     }
 }

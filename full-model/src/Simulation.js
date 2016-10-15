@@ -3,6 +3,7 @@
 class Simulation {
     constructor(ctx, config) {
         var generalConfig = config.general;
+        this.boxSize = generalConfig.boxSize;
         this.create3DScenario(ctx, generalConfig);
         this.createScenario(config);
     }
@@ -35,6 +36,16 @@ class Simulation {
         this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
         this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
         this.generateTrees(generalConfig.foodNodes, config.tree);
+    }
+
+    iterate() {
+        var rows = this.grid.length;
+        var cols = this.grid[0].length;
+        for(var i = 0; i < rows; ++i) {
+            for(var j = 0; j < cols; ++j) {
+                this.grid.iterate(this.grid, i, j);
+            }
+        }
     }
 
     generateTrees(nodes, treeConfig) {
@@ -82,6 +93,14 @@ class Simulation {
         var rows = this.grid.length;
         var cols = this.grid[0].length;
 
+        var visited = new Array(rows);
+        for(var i = 0; i < rows; ++i) {
+            visited[i] = new Array(cols);
+            for(var j = 0; j < cols; ++j) {
+                visited[i][j] = false;
+            }
+        }
+
         var queue = new Queue();
         queue.enqueue([row, col, treeConfig.maxResourceMean]);
         while(!queue.isEmpty()) {
@@ -90,7 +109,7 @@ class Simulation {
             var c = currentValue[1];
             var maxResource = currentValue[2];
 
-            if(r < 0 || r >= rows || c < 0 || c >= cols) {
+            if(r < 0 || r >= rows || c < 0 || c >= cols || visited[r][c]) {
                 continue;
             }
 
@@ -104,15 +123,18 @@ class Simulation {
             queue.enqueue([r, c + 1, maxResource - 1]);
             queue.enqueue([r - 1, c, maxResource - 1]);
             queue.enqueue([r, c - 1, maxResource - 1]);
+            visited[r][c] = true;
         }
     }
 
     fillIndividual(Individual, size, config) {
+        var rows = this.grid.length;
+        var cols = this.grid[0].length;
         for(var i = 0; i < size; ++i) {
             var pos = this.getEmptyPosition(rows, cols);
             var row = pos[0];
             var col = pos[1];
-            this.grid[row][col].individual = new Individual(this.scene, config, row, col);
+            this.grid[row][col].individual = new Individual(this.scene, config, row, col, this.boxSize);
         }
     }
 
@@ -169,7 +191,22 @@ class Simulation {
 
         //scene.remove(sphere);
 
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+
         this.renderer.render(this.scene, this.camera);
 
+    }
+
+    show() {
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    static startSimulation(simulation) {
+        requestAnimationFrame(function() {
+            Simulation.startSimulation(simulation);
+        });
+        simulation.show();
+        console.log("hello");
     }
 }

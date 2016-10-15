@@ -5,8 +5,8 @@ var config = {
         "numZebras": 25,
         "numLeopards": 7,
         "foodNodes": 2,
-        "rows": 40,
-        "cols": 40,
+        "rows": 10,
+        "cols": 10,
         "boxSize": 40
     },
     "zebra": {
@@ -16,6 +16,7 @@ var config = {
         "metabolism": 4,
         "meanView": 5,
         "stdView": 2,
+        "cubeSize": 15
     },
     "leopard": {
         "age": 12,
@@ -24,6 +25,7 @@ var config = {
         "metabolism": 4,
         "viewMean": 5,
         "viewStd": 2,
+        "cubeSize": 15
     },
     "tree": {
         "resourceProductionMean": 3,
@@ -38,4 +40,5 @@ var config = {
 
 var c = document.getElementById("myCanvas");
 var simulation = new Simulation(c, config);
+Simulation.startSimulation(simulation);
 

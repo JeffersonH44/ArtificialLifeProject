@@ -15,8 +15,8 @@ class Utils {
         }
     }
 
-    static randomInt(a, b) {
-        return Math.random() * (max - min) + min;
+    static randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
     }
 }
 
