@@ -33,7 +33,6 @@ class Simulation {
             }
         }
 
-        console.log("ho");
         this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
         this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
         this.generateTrees(generalConfig.foodNodes, config.tree);
@@ -129,6 +128,7 @@ class Simulation {
     }
 
     fillIndividual(Individual, size, config) {
+        console.log(Individual);
         var rows = this.grid.length;
         var cols = this.grid[0].length;
         for(var i = 0; i < size; ++i) {

@@ -3,7 +3,7 @@
 var config = {
     "general": {
         "numZebras": 30,
-        "numLeopards": 0,
+        "numLeopards": 20,
         "foodNodes": 2,
         "rows": 10,
         "cols": 10,
