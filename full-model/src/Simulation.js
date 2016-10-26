@@ -203,8 +203,8 @@ class Simulation {
 
         var textureUrl	= 'images/grasslight-small.jpg';
         var texture	= THREE.ImageUtils.loadTexture(textureUrl);
-        texture.wrapS	= THREE.RepeatWrapping;
-        texture.wrapT	= THREE.RepeatWrapping;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.x= 10;
         texture.repeat.y= 10;
         texture.anisotropy = this.renderer.getMaxAnisotropy();
@@ -212,7 +212,7 @@ class Simulation {
         var geometry = new THREE.PlaneGeometry(width, height, size, size);
         var material = new THREE.MeshPhongMaterial({
             map	: texture,
-            emissive: 'green',
+            emissive: 'green'
         });
         var grid = new THREE.Mesh(geometry, material);
         grid.translateX(width / 2);
