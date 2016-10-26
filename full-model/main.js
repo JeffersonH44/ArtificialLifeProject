@@ -31,7 +31,9 @@ var config = {
         "resourceProductionMean": 3,
         "resourceProductionStd": 1,
         "maxResourceMean": 10,
-        "maxResourceStd": 1
+        "maxResourceStd": 1,
+        "downgrade": 3,
+        "cubeSize": 10
     },
     "box": {
         "cleanRate": 1

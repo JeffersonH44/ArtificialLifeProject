@@ -33,8 +33,8 @@ class Simulation {
             }
         }
 
-        this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
-        this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
+        //this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
+        //this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
         this.generateTrees(generalConfig.foodNodes, config.tree);
     }
 
@@ -51,8 +51,8 @@ class Simulation {
     generateTrees(nodes, treeConfig) {
         var rows = this.grid.length;
         var cols = this.grid[0].length;
-        var rowsOffset = rows / 15;
-        var colsOffset = cols / 15;
+        var rowsOffset = Math.floor(rows / 2);
+        var colsOffset = Math.floor(cols / 2);
 
         var node = [
             {
@@ -83,8 +83,10 @@ class Simulation {
 
         for(var i = 0; i < nodes; ++i) {
             var currentNode = node[i];
+            console.log(currentNode);
             var row = Utils.randomInt(currentNode.startRow, currentNode.endRow);
             var col = Utils.randomInt(currentNode.startCol, currentNode.endCol);
+            console.log("initial tree node:", row, col);
             this.fillTreeNode(row, col, treeConfig);
         }
     }
@@ -92,6 +94,8 @@ class Simulation {
     fillTreeNode(row, col, treeConfig) {
         var rows = this.grid.length;
         var cols = this.grid[0].length;
+        var downgrade = treeConfig.downgrade;
+        var initialMaxResource = treeConfig.maxResourceMean;
 
         var visited = new Array(rows);
         for(var i = 0; i < rows; ++i) {
@@ -109,22 +113,26 @@ class Simulation {
             var c = currentValue[1];
             var maxResource = currentValue[2];
 
-            if(r < 0 || r >= rows || c < 0 || c >= cols || visited[r][c]) {
+            if(r < 0 || r >= rows || c < 0 || c >= cols || maxResource <= 0 || visited[r][c]) {
                 continue;
             }
 
+            // TODO: remove method in case of exist
             if(this.grid[r][c].tree === undefined ||
                 this.grid[r][c].tree.maxResource < maxResource) {
                 treeConfig.maxResourceMean = maxResource;
-                this.grid[r][c].tree = new Tree(this.scene, treeConfig);
+                this.grid[r][c].tree = new Tree(this.scene, treeConfig, r, c, this.boxSize);
+                console.log("Creating tree at position:", r, c, "with max resource:", maxResource);
             }
 
-            queue.enqueue([r + 1, c, maxResource - 1]);
-            queue.enqueue([r, c + 1, maxResource - 1]);
-            queue.enqueue([r - 1, c, maxResource - 1]);
-            queue.enqueue([r, c - 1, maxResource - 1]);
+            queue.enqueue([r + 1, c, maxResource - downgrade]);
+            queue.enqueue([r, c + 1, maxResource - downgrade]);
+            queue.enqueue([r - 1, c, maxResource - downgrade]);
+            queue.enqueue([r, c - 1, maxResource - downgrade]);
             visited[r][c] = true;
         }
+
+        treeConfig.maxResourceMean = initialMaxResource;
     }
 
     fillIndividual(Individual, size, config) {
