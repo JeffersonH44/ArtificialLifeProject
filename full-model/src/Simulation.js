@@ -33,8 +33,8 @@ class Simulation {
             }
         }
 
-        //this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
-        //this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
+        this.fillIndividual(Zebra, generalConfig.numZebras, config.zebra);
+        this.fillIndividual(Leopard, generalConfig.numLeopards, config.leopard);
         this.generateTrees(generalConfig.foodNodes, config.tree);
     }
 
@@ -83,10 +83,8 @@ class Simulation {
 
         for(var i = 0; i < nodes; ++i) {
             var currentNode = node[i];
-            console.log(currentNode);
             var row = Utils.randomInt(currentNode.startRow, currentNode.endRow);
             var col = Utils.randomInt(currentNode.startCol, currentNode.endCol);
-            console.log("initial tree node:", row, col);
             this.fillTreeNode(row, col, treeConfig);
         }
     }
@@ -122,7 +120,6 @@ class Simulation {
                 this.grid[r][c].tree.maxResource < maxResource) {
                 treeConfig.maxResourceMean = maxResource;
                 this.grid[r][c].tree = new Tree(this.scene, treeConfig, r, c, this.boxSize);
-                console.log("Creating tree at position:", r, c, "with max resource:", maxResource);
             }
 
             queue.enqueue([r + 1, c, maxResource - downgrade]);
@@ -155,6 +152,28 @@ class Simulation {
         return [row, col]
     }
 
+    generateTexture() {
+        var canvas = document.createElement( 'canvas' );
+        canvas.width = 512;
+        canvas.height = 512;
+
+        var context = canvas.getContext( '2d' );
+
+        for ( var i = 0; i < 20000; i ++ ) {
+
+            context.fillStyle = 'hsl(0,0%,' + ( Math.random() * 50 + 50 ) + '%)';
+            context.beginPath();
+            context.arc( Math.random() * canvas.width, Math.random() * canvas.height, Math.random() + 0.15, 0, Math.PI * 2, true );
+            context.fill();
+
+        }
+
+        context.globalAlpha = 0.075;
+        context.globalCompositeOperation = 'lighter';
+
+        return canvas;
+    }
+
     create3DScenario(ctx, config) {
         this.ctx = ctx;
         var width = config.cols * config.boxSize;
@@ -182,16 +201,22 @@ class Simulation {
 
         // TODO: to change
 
-        var basicMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFF0000
+        var textureUrl	= 'images/grasslight-small.jpg';
+        var texture	= THREE.ImageUtils.loadTexture(textureUrl);
+        texture.wrapS	= THREE.RepeatWrapping;
+        texture.wrapT	= THREE.RepeatWrapping;
+        texture.repeat.x= 10;
+        texture.repeat.y= 10;
+        texture.anisotropy = this.renderer.getMaxAnisotropy();
+        // build object3d
+        var geometry = new THREE.PlaneGeometry(width, height, size, size);
+        var material = new THREE.MeshPhongMaterial({
+            map	: texture,
+            emissive: 'green',
         });
-
-        var grid = new THREE.Mesh(
-            new THREE.PlaneGeometry(width, height, size, size),
-            basicMaterial);
+        var grid = new THREE.Mesh(geometry, material);
         grid.translateX(width / 2);
         grid.translateY(height / 2);
-        //sphere.position.x = 100;
         this.scene.add(grid);
 
         var lightPoint = new THREE.PointLight(0xFFFFFFF);

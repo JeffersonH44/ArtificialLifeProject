@@ -11,7 +11,7 @@ class Tree {
 
         this.build3DObject(0x00FF00);
         scene.add(this.element);
-        this.element.translateX(row * this.boxSize + (this.boxSize - 15));
+        this.element.translateX(row * this.boxSize);
         this.element.translateY(col * this.boxSize + (this.boxSize - 15));
     }
 
