@@ -7,7 +7,7 @@ var config = {
         "foodNodes": 2,
         "rows": 10,
         "cols": 10,
-        "boxSize": 40
+        "boxSize": 100
     },
     "zebra": {
         "age": 12,

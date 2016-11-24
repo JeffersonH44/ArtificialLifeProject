@@ -2,14 +2,14 @@
 
 class Simulation {
     constructor(ctx, config) {
-        var generalConfig = config.general;
+        let generalConfig = config.general;
         this.boxSize = generalConfig.boxSize;
         this.create3DScenario(ctx, generalConfig);
         this.createScenario(config);
     }
 
     createScenario(config) {
-        var generalConfig = config.general;
+        let generalConfig = config.general;
 
         // creating all individuals
         /*this.zebras = [];
@@ -22,13 +22,13 @@ class Simulation {
         }*/
 
         // creating scenario
-        var rows = generalConfig.rows;
-        var cols = generalConfig.cols;
+        let rows = generalConfig.rows;
+        let cols = generalConfig.cols;
         this.grid = new Array(rows);
 
-        for(var i = 0; i < rows; ++i) {
+        for(let i = 0; i < rows; ++i) {
             this.grid[i] = new Array(cols);
-            for(var j = 0; j < cols; ++j) {
+            for(let j = 0; j < cols; ++j) {
                 this.grid[i][j] = new Box(config.box);
             }
         }
@@ -39,22 +39,22 @@ class Simulation {
     }
 
     iterate() {
-        var rows = this.grid.length;
-        var cols = this.grid[0].length;
-        for(var i = 0; i < rows; ++i) {
-            for(var j = 0; j < cols; ++j) {
+        let rows = this.grid.length;
+        let cols = this.grid[0].length;
+        for(let i = 0; i < rows; ++i) {
+            for(let j = 0; j < cols; ++j) {
                 this.grid.iterate(this.grid, i, j);
             }
         }
     }
 
     generateTrees(nodes, treeConfig) {
-        var rows = this.grid.length;
-        var cols = this.grid[0].length;
-        var rowsOffset = Math.floor(rows / 2);
-        var colsOffset = Math.floor(cols / 2);
+        let rows = this.grid.length;
+        let cols = this.grid[0].length;
+        let rowsOffset = Math.floor(rows / 2);
+        let colsOffset = Math.floor(cols / 2);
 
-        var node = [
+        let node = [
             {
                 startRow: 0,
                 endRow: rowsOffset,
@@ -81,35 +81,35 @@ class Simulation {
             },
         ];
 
-        for(var i = 0; i < nodes; ++i) {
-            var currentNode = node[i];
-            var row = Utils.randomInt(currentNode.startRow, currentNode.endRow);
-            var col = Utils.randomInt(currentNode.startCol, currentNode.endCol);
+        for(let i = 0; i < nodes; ++i) {
+            let currentNode = node[i];
+            let row = Utils.randomInt(currentNode.startRow, currentNode.endRow);
+            let col = Utils.randomInt(currentNode.startCol, currentNode.endCol);
             this.fillTreeNode(row, col, treeConfig);
         }
     }
 
     fillTreeNode(row, col, treeConfig) {
-        var rows = this.grid.length;
-        var cols = this.grid[0].length;
-        var downgrade = treeConfig.downgrade;
-        var initialMaxResource = treeConfig.maxResourceMean;
+        let rows = this.grid.length;
+        let cols = this.grid[0].length;
+        let downgrade = treeConfig.downgrade;
+        let initialMaxResource = treeConfig.maxResourceMean;
 
-        var visited = new Array(rows);
-        for(var i = 0; i < rows; ++i) {
+        let visited = new Array(rows);
+        for(let i = 0; i < rows; ++i) {
             visited[i] = new Array(cols);
-            for(var j = 0; j < cols; ++j) {
+            for(let j = 0; j < cols; ++j) {
                 visited[i][j] = false;
             }
         }
 
-        var queue = new Queue();
+        let queue = new Queue();
         queue.enqueue([row, col, treeConfig.maxResourceMean]);
         while(!queue.isEmpty()) {
-            var currentValue = queue.dequeue();
-            var r = currentValue[0];
-            var c = currentValue[1];
-            var maxResource = currentValue[2];
+            let currentValue = queue.dequeue();
+            let r = currentValue[0];
+            let c = currentValue[1];
+            let maxResource = currentValue[2];
 
             if(r < 0 || r >= rows || c < 0 || c >= cols || maxResource <= 0 || visited[r][c]) {
                 continue;
@@ -134,12 +134,12 @@ class Simulation {
 
     fillIndividual(Individual, size, config) {
         console.log(Individual);
-        var rows = this.grid.length;
-        var cols = this.grid[0].length;
-        for(var i = 0; i < size; ++i) {
-            var pos = this.getEmptyPosition(rows, cols);
-            var row = pos[0];
-            var col = pos[1];
+        let rows = this.grid.length;
+        let cols = this.grid[0].length;
+        for(let i = 0; i < size; ++i) {
+            let pos = this.getEmptyPosition(rows, cols);
+            let row = pos[0];
+            let col = pos[1];
             this.grid[row][col].individual = new Individual(this.scene, config, row, col, this.boxSize);
         }
     }
@@ -153,13 +153,13 @@ class Simulation {
     }
 
     generateTexture() {
-        var canvas = document.createElement( 'canvas' );
+        let canvas = document.createElement('canvas');
         canvas.width = 512;
         canvas.height = 512;
 
-        var context = canvas.getContext( '2d' );
+        let context = canvas.getContext('2d');
 
-        for ( var i = 0; i < 20000; i ++ ) {
+        for (let i = 0; i < 20000; i ++ ) {
 
             context.fillStyle = 'hsl(0,0%,' + ( Math.random() * 50 + 50 ) + '%)';
             context.beginPath();
@@ -176,14 +176,14 @@ class Simulation {
 
     create3DScenario(ctx, config) {
         this.ctx = ctx;
-        var width = config.cols * config.boxSize;
-        var height = config.rows * config.boxSize;
-        var size = config.size;
+        let width = config.cols * config.boxSize;
+        let height = config.rows * config.boxSize;
+        let size = config.size;
 
-        var viewAngle = 45;
-        var aspect = width / height;
-        var near = 0.1;
-        var far = 10000;
+        let viewAngle = 45;
+        let aspect = width / height;
+        let near = 0.1;
+        let far = 10000;
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.ctx
@@ -201,25 +201,25 @@ class Simulation {
 
         // TODO: to change
 
-        var textureUrl	= 'images/grasslight-small.jpg';
-        var texture	= THREE.ImageUtils.loadTexture(textureUrl);
+        let textureUrl = 'images/grasslight-small.jpg';
+        let texture = THREE.ImageUtils.loadTexture(textureUrl);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.x= 10;
         texture.repeat.y= 10;
         texture.anisotropy = this.renderer.getMaxAnisotropy();
         // build object3d
-        var geometry = new THREE.PlaneGeometry(width, height, size, size);
-        var material = new THREE.MeshPhongMaterial({
-            map	: texture,
+        let geometry = new THREE.PlaneGeometry(width, height, size, size);
+        let material = new THREE.MeshPhongMaterial({
+            map: texture,
             emissive: 'green'
         });
-        var grid = new THREE.Mesh(geometry, material);
+        let grid = new THREE.Mesh(geometry, material);
         grid.translateX(width / 2);
         grid.translateY(height / 2);
         this.scene.add(grid);
 
-        var lightPoint = new THREE.PointLight(0xFFFFFFF);
+        let lightPoint = new THREE.PointLight(0xFFFFFFF);
         lightPoint.position.x = 10;
         lightPoint.position.y = 50;
         lightPoint.position.z = 130;
