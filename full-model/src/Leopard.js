@@ -6,7 +6,11 @@ class Leopard extends Individual{
     }
 
     move(grid) {
-        return [0, 0];
+        let ret = [];
+        let val = Utils.randomInt(-1, 1);
+        ret.push(val);
+        ret.push(val == 0 ? Utils.randomInt(-1, 1) : 0);
+        return ret;
     }
 
     eat(grid) {

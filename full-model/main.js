@@ -2,26 +2,29 @@
 
 var config = {
     "general": {
-        "numZebras": 30,
-        "numLeopards": 20,
+        "numZebras": 70,
+        "numLeopards": 0,
         "foodNodes": 2,
-        "rows": 10,
-        "cols": 10,
-        "boxSize": 100
+        "rows": 50,
+        "cols": 50,
+        "boxSize": 40,
+        "fps": 15
     },
     "zebra": {
-        "age": 12,
-        "maxEnergy": 15,
+        "age": 300,
+        "maxEnergy": 300,
         "minEnergy": 2,
         "metabolism": 4,
-        "meanView": 5,
+        "meanView": 4,
         "stdView": 2,
         "cubeSize": 15,
-        "foodRate": 0.4,
-        "separation": 2,
-        "cohesion": 4,
-        "separationForce": 0.15,
-        "cohesionForce": 0.1,
+        "foodRate": 0.6,
+        "separation": 5,
+        "cohesion": 5,
+        "alignment": 5,
+        "separationForce": 2,
+        "cohesionForce": 5,
+        "alignmentForce": 1,
         "pollutionProduction": 0.6
     },
     "leopard": {
@@ -38,9 +41,9 @@ var config = {
     "tree": {
         "resourceProductionMean": 3,
         "resourceProductionStd": 1,
-        "maxResourceMean": 10,
+        "maxResourceMean": 30,
         "maxResourceStd": 1,
-        "downgrade": 3,
+        "downgrade": 1,
         "cubeSize": 10
     },
     "box": {

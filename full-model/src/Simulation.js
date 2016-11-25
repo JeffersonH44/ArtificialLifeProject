@@ -6,6 +6,13 @@ class Simulation {
         this.boxSize = generalConfig.boxSize;
         this.create3DScenario(ctx, generalConfig);
         this.createScenario(config);
+
+        // config for fps
+        this.fps = generalConfig.fps;
+        this.stats = new Stats();
+        this.stats.showPanel(0);
+        document.body.appendChild(this.stats.dom);
+        this.then = Date.now();
     }
 
     createScenario(config) {
@@ -41,6 +48,15 @@ class Simulation {
     iterate() {
         let rows = this.grid.length;
         let cols = this.grid[0].length;
+
+        for(let i = 0; i < rows; ++i) {
+            for(let j = 0; j < cols; ++j) {
+                if(this.grid[i][j].individual) {
+                    this.grid[i][j].individual.moved = false;
+                }
+            }
+        }
+
         for(let i = 0; i < rows; ++i) {
             for(let j = 0; j < cols; ++j) {
                 this.grid[i][j].iterate(this.grid, i, j);
@@ -194,7 +210,7 @@ class Simulation {
 
         this.scene.add(this.camera);
 
-        this.camera.position.z = 1000;
+        this.camera.position.z = 3000;
 
         this.renderer.setSize(width, height);
 
@@ -234,14 +250,35 @@ class Simulation {
 
     show() {
         this.controls.update();
-        this.renderer.render(this.scene, this.camera);
         this.iterate();
+        this.renderer.render(this.scene, this.camera);
     }
 
     static startSimulation(simulation) {
+        // request another frame
+
         requestAnimationFrame(function() {
             Simulation.startSimulation(simulation);
         });
-        simulation.show();
+
+        // calc elapsed time since last loop
+
+        let now = Date.now();
+        let elapsed = now - simulation.then;
+        let fpsInterval = 1000 / simulation.fps;
+
+        // if enough time has elapsed, draw the next frame
+
+        if (elapsed > fpsInterval) {
+
+            // Get ready for next frame by setting then=now, but also adjust for your
+            // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
+            simulation.then = now - (elapsed % fpsInterval);
+
+            // Put your drawing code here
+            simulation.stats.begin();
+            simulation.show();
+            simulation.stats.end();
+        }
     }
 }
