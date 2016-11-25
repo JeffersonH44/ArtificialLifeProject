@@ -28,11 +28,12 @@ class Zebra extends Individual {
                 let spareX = this.row - i;
                 let spareY = this.col - j;
                 let distSquared = spareX + spareY;
-                if(box.individual instanceof Leopard && distSquared < this.separation) {
+                if(box.individual /*instanceof Leopard*/ && distSquared < this.separation) {
                     sforceX += spareX;
                     sforceY += spareY;
                 } else {
-                    let instance = this.reproduction ? box.individual instanceof Zebra : box.resources[Constants.TREE];
+                    let instance = box.individual;
+                    //let instance = this.reproduction ? box.individual /*instanceof Zebra*/ : box.resources[Constants.TREE];
                     if(instance && distSquared < this.cohesion) {
                         cforceX += spareX;
                         cforceY += spareY;
