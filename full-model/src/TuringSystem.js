@@ -25,8 +25,8 @@ class TuringSystem {
     initialize() {
         for(var i = 0; i < this.rows; ++i) {
             for(var j = 0 ; j < this.cols; ++j) {
-                this.Ao[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussian(0, 1) * 2.0;
-                this.Bo[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussian(0, 1) * 2.0;
+                this.Ao[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
+                this.Bo[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
                 this.An[i][j] = 0.0;
                 this.Bn[i][j] = 0.0;
             }

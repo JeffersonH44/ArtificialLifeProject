@@ -4,8 +4,8 @@ class Tree {
     constructor(scene, config, row, col, boxSize) {
         this.boxSize = boxSize;
         this.cubeSize = config.cubeSize;
-        this.production = Math.floor(Random.gaussianRandom(config.resourceProductionMean, config.resourceProductionStd));
-        this.maxProduction = Math.floor(Random.gaussianRandom(config.maxResourceMean, config.maxResourceStd));
+        this.production = Math.floor(Utils.gaussianRandom(config.resourceProductionMean, config.resourceProductionStd));
+        this.maxProduction = Math.floor(Utils.gaussianRandom(config.maxResourceMean, config.maxResourceStd));
 
         this.build3DObject(0x00FF00);
         scene.add(this.element);
@@ -16,7 +16,6 @@ class Tree {
     iterate(box) {
         //TODO: grow tree
 
-        //TODO: produce with a random variable
         let resource = box.resources[Constants.TREE];
         box.resources[Constants.TREE] = resource + this.production > this.maxProduction ? this.maxProduction : resource + this.production;
     }

@@ -43,7 +43,7 @@ class Simulation {
         let cols = this.grid[0].length;
         for(let i = 0; i < rows; ++i) {
             for(let j = 0; j < cols; ++j) {
-                this.grid.iterate(this.grid, i, j);
+                this.grid[i][j].iterate(this.grid, i, j);
             }
         }
     }
@@ -133,7 +133,6 @@ class Simulation {
     }
 
     fillIndividual(Individual, size, config) {
-        console.log(Individual);
         let rows = this.grid.length;
         let cols = this.grid[0].length;
         for(let i = 0; i < size; ++i) {
@@ -236,6 +235,7 @@ class Simulation {
     show() {
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
+        this.iterate();
     }
 
     static startSimulation(simulation) {

@@ -16,16 +16,24 @@ var config = {
         "metabolism": 4,
         "meanView": 5,
         "stdView": 2,
-        "cubeSize": 15
+        "cubeSize": 15,
+        "foodRate": 0.4,
+        "separation": 2,
+        "cohesion": 4,
+        "separationForce": 0.15,
+        "cohesionForce": 0.1,
+        "pollutionProduction": 0.6
     },
     "leopard": {
         "age": 12,
         "maxEnergy": 15,
         "minEnergy": 2,
         "metabolism": 4,
-        "viewMean": 5,
-        "viewStd": 2,
-        "cubeSize": 15
+        "meanView": 5,
+        "stdView": 2,
+        "cubeSize": 15,
+        "foodRate": 0.4,
+        "pollutionProduction": 0.8
     },
     "tree": {
         "resourceProductionMean": 3,

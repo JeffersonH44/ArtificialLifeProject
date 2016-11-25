@@ -1,50 +1,51 @@
 'use strict';
 
 class Utils {
-    // returns a g random function with the given mean and stdev.
-    static gaussian(mean, stdev, generate) {
-        var rand = g(mean, stdev);
-        if(generate === undefined) {
-            return rand();
-        } else {
-            var list = new Array(generate);
-            for(var i = 0; i < generate; ++i) {
-                list[i] = rand();
-            }
-            return list;
+
+    static gaussianRandom(mean, std) {
+
+        if (mean === undefined || std === undefined) {
+            throw "Gaussian random needs 2 arguments (mean, standard deviation)";
         }
+
+        let randByBoxMullerTransform = (function () {
+            let vals = [];
+
+            function calc() {
+                let alpha = Math.random(),
+                    beta = Math.random();
+                return [
+                    Math.sqrt(-2 * Math.log(alpha)) * Math.sin(2 * Math.PI * beta),
+                    Math.sqrt(-2 * Math.log(alpha)) * Math.cos(2 * Math.PI * beta)
+                ];
+            }
+
+            return function () {
+                vals = vals.length == 0 ? calc() : vals;
+                return vals.pop();
+            }
+        })();
+
+        return randByBoxMullerTransform() * std + mean;
     }
 
     static randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
+        return Math.floor(this.random(min, max));
     }
-}
 
-function g(mean, stdev) {
-    var y2;
-    var use_last = false;
-    return function() {
-        var y1;
-        if(use_last) {
-            y1 = y2;
-            use_last = false;
-        }
-        else {
-            var x1, x2, w;
-            do {
-                x1 = 2.0 * Math.random() - 1.0;
-                x2 = 2.0 * Math.random() - 1.0;
-                w  = x1 * x1 + x2 * x2;
-            } while( w >= 1.0);
-            w = Math.sqrt((-2.0 * Math.log(w))/w);
-            y1 = x1 * w;
-            y2 = x2 * w;
-            use_last = true;
-        }
+    static random(min, max) {
+        return Math.random()*(max-min)+min;
+    }
 
-        var retval = mean + stdev * y1;
-        if(retval > 0)
-            return retval;
-        return -retval;
+    static toDegrees(radians) {
+        return radians * (180 / Math.PI);
+    }
+
+    static hypotenuse(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        let lo = Math.min(a, b);
+        let hi = Math.max(a, b);
+        return hi + 3 * lo / 32 + Math.max(0, 2 * lo - hi) / 8 + Math.max(0, 4 * lo - hi) / 16;
     }
 }

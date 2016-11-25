@@ -18,15 +18,15 @@ class Box {
             this.tree.iterate(this);
         }
         if(this.individual) {
-            let offset = this.individual.iterate(this, grid, i, j);
+            this.individual.iterate(grid);
 
-            // move current individual if they want to move
+            /*// move current individual if they want to move
             if(offset[0] || offset[1]) {
                 let x = i + offset[0];
                 let y = j + offset[1];
                 grid[x][y].individual = this.individual;
                 this.individual = undefined;
-            }
+            }*/
         }
 
         // remove polution
