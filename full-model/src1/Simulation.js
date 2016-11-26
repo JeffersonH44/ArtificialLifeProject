@@ -95,6 +95,8 @@ class Simulation {
 
         document.body.appendChild( this.renderer.domElement );
 
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+
         //stats = new Stats();
         //document.getElementById( 'container' ).appendChild(stats.dom);
 
@@ -199,7 +201,15 @@ class Simulation {
             //this.scene.add(this.tiger);
         }
 
+        // loop of death
+        for ( var i = 0; i < boids.length; i++ ) {
 
+            this.boid = boids[ i ];
+            if(this.boid.isDead()) {
+                this.boids.remove(this.boid);
+                console.log("killed");
+            }
+        }
 
         //console.log( "Death?? 1=" + boids[0].death_state + "  2= " + boids[1].death_state );
 

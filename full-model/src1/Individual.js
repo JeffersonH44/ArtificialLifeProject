@@ -180,6 +180,11 @@ class Individual {
 
     setDeath() {
         this.death_state = true;
+        this.scene.remove(this.element3D);
+    }
+
+    isDead() {
+        return this.death_state;
     }
 
     repulse( target ) {
