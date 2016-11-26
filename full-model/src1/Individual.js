@@ -13,11 +13,14 @@ var getKill_Radius = 30;
 
 
 var avoid_wall = true;
+var wall_force = 10;
 
 class Individual {
 
-    constructor(scene) {
-        this.scene = scene;
+    constructor(config) {
+        this.resource = config.resource;
+        this.scene = config.scene;
+
         this.element3D = undefined;
 
         this.vector = new THREE.Vector3();
@@ -65,32 +68,32 @@ class Individual {
 
             this.vector.set( - this.width, this.position.y, this.position.z );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
             this.vector.set( this.width, this.position.y, this.position.z );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
             this.vector.set( this.position.x, - this.height, this.position.z );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
             this.vector.set( this.position.x, this.height, this.position.z );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
             this.vector.set( this.position.x, this.position.y, - this.depth );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
             this.vector.set( this.position.x, this.position.y, this.depth );
             this.vector = this.avoid( this.vector );
-            this.vector.multiplyScalar( 5 );
+            this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
         }/* else {
