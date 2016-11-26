@@ -9,9 +9,6 @@ class Simulation {
 
         // config for fps
         this.fps = generalConfig.fps;
-        this.stats = new Stats();
-        this.stats.showPanel(0);
-        document.body.appendChild(this.stats.dom);
         this.then = Date.now();
     }
 
@@ -276,9 +273,7 @@ class Simulation {
             simulation.then = now - (elapsed % fpsInterval);
 
             // Put your drawing code here
-            simulation.stats.begin();
             simulation.show();
-            simulation.stats.end();
         }
     }
 }

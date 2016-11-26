@@ -70,7 +70,7 @@ class Individual {
         }
 
         if(this.reproduction) {
-            this.reproduce(grid);
+            //this.reproduce(grid);
         } else {
             this.eat(grid);
         }

@@ -5,7 +5,7 @@
 
 var camera, scene, renderer;
 var geometry, material, mesh;
-var kill=0.062, feed=0.03, difussionA=1.0, difussionB=0.5, deltaT=1.0, offset = 5;
+var kill=3.5, feed=16, difussionA=1.0, difussionB=0.5, deltaT=1.0, offset = 5;
 var BArea = 5;
 var Ao, An, Bo, Bn, rows=256, cols=256, iterations = 9000, BPoints = 20;
 var conv = [0.05, 0.2, 0.05, 0.2, -1, 0.2, 0.05, 0.2, 0.05];
@@ -24,7 +24,7 @@ function createMatrix() {
     An = new Array(rows);
     Bo = new Array(rows);
     Bn = new Array(rows);
-    for(var i = 0; i < A.length; ++i) {
+    for(var i = 0; i < Ao.length; ++i) {
         A[i] = new Array(cols + 2*offset);
         B[i] = new Array(cols + 2*offset);
         for(var j = 0; j < A[i].length; ++j) {

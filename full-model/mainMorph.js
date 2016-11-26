@@ -1,9 +1,10 @@
 'use strict';
 
-var morph = new TuringSystem(250, 250, 1.6, 6);
-morph.solve(100);
+var morph = new TuringSystem(200, 200, 2.0, 24.0);
+morph.solve();
+var least = morph.getLeastValues();
 
-var scale = chroma.scale(['yellow', 'black']).domain([-15, 15]);
+var scale = chroma.scale(['black', 'yellow']).domain(least);
 var c =  document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 

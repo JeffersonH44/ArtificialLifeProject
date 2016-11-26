@@ -43,7 +43,50 @@ class TuringSystem {
     }
 
     solve(iterations) {
-        var DiA = 0.0, ReA = 0.0, DiB = 0.0, ReB = 0.0;
+        let n, i, j, iplus1, iminus1, jplus1, jminus1;
+        let DiA, ReA, DiB, ReB;
+        let height = this.rows, width = this.cols;
+        let CA = this.CA, CB = this.CB;
+        this.initialize();
+
+        // uses Euler's method to solve the diff eqns
+        for( n=0; n<iterations; ++n ) {
+            let Bo = this.Bo, Bn = this.Bn, Ao = this.Ao, An = this.An;
+            for( i=0; i<height; ++i) {
+                // treat the surface as a torus by wrapping at the edges
+                iplus1 = i+1;
+                iminus1 = i-1;
+                if( i == 0 ) iminus1 = height - 1;
+                if( i == height - 1 ) iplus1 = 0;
+
+                for( j=0; j<width; ++j ) {
+                    jplus1 = j+1;
+                    jminus1 = j-1;
+                    if( j == 0 ) jminus1 = width - 1;
+                    if( j == width - 1 ) jplus1 = 0;
+
+                    // Component A
+                    DiA = CA * ( Ao[iplus1][j] - 2.0 * Ao[i][j] + Ao[iminus1][j]
+                        + Ao[i][jplus1] - 2.0 * Ao[i][j] + Ao[i][jminus1] );
+                    ReA = Ao[i][j] * Bo[i][j] - Ao[i][j] - 12.0;
+                    An[i][j] = Ao[i][j] + 0.01 * (ReA + DiA);
+                    if( An[i][j] < 0.0 ) An[i][j] = 0.0;
+
+                    // Component B
+                    DiB = CB * ( Bo[iplus1][j] - 2.0 * Bo[i][j] + Bo[iminus1][j]
+                        + Bo[i][jplus1] - 2.0 * Bo[i][j] + Bo[i][jminus1] );
+                    ReB = 16.0 - Ao[i][j] * Bo[i][j];
+                    Bn[i][j] = Bo[i][j] + 0.01 * (ReB + DiB);
+                    if( Bn[i][j] < 0.0 ) Bn[i][j]=0.0;
+                }
+            }
+            // Swap Ao for An, Bo for Bn
+            this.swapBuffers();
+        }
+        console.log(this.An);
+        console.log(this.Bn);
+
+        /*var DiA = 0.0, ReA = 0.0, DiB = 0.0, ReB = 0.0;
 
         this.initialize();
         for(var k = 0; k < iterations; ++k) {
@@ -79,7 +122,19 @@ class TuringSystem {
 
             this.swapBuffers();
         }
-        console.log(this.An);
+        console.log(this.An);*/
+    }
+
+    getLeastValues() {
+        var min = Number.POSITIVE_INFINITY;
+        var max = Number.NEGATIVE_INFINITY;
+        for(var i = 0; i < this.An.length; ++i) {
+            for(var j = 0; j < this.Bn[0].length; ++j) {
+                min = Math.min(min, this.Bn[i][j]);
+                max = Math.max(max, this.Bn[i][j]);
+            }
+        }
+        return [min, max];
     }
 
     fillContext(ctx, scale) {

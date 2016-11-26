@@ -2,11 +2,11 @@
 
 var config = {
     "general": {
-        "numZebras": 70,
+        "numZebras": 30,
         "numLeopards": 0,
         "foodNodes": 2,
-        "rows": 50,
-        "cols": 50,
+        "rows": 40,
+        "cols": 40,
         "boxSize": 40,
         "fps": 15
     },
@@ -14,7 +14,7 @@ var config = {
         "age": 300,
         "maxEnergy": 300,
         "minEnergy": 2,
-        "metabolism": 4,
+        "metabolism": 1,
         "meanView": 4,
         "stdView": 2,
         "cubeSize": 15,
@@ -41,7 +41,7 @@ var config = {
     "tree": {
         "resourceProductionMean": 3,
         "resourceProductionStd": 1,
-        "maxResourceMean": 30,
+        "maxResourceMean": 3,
         "maxResourceStd": 1,
         "downgrade": 1,
         "cubeSize": 10
