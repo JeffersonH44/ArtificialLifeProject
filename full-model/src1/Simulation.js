@@ -45,14 +45,15 @@ class Simulation {
 
         this.scene = new THREE.Scene();
 
-        this.zebras = [];
-        this.boids = [];
-        this.tigers = [];
-        this.boids_t = [];
+        //this.zebras = new HashSet();
+        this.boids = new HashSet();
+        //this.tigers = new HashSet();
+        this.boids_t = new HashSet();
 
-        for ( var i = 0; i < 35; i ++ ) {
-            this.boids.push(new Zebra());
-            this.boid = this.boids[ i ];
+        for ( var i = 0; i < 35; i++ ) {
+            this.boid = new Zebra(this.scene);
+            this.boids.add(this.boid);
+            //this.boid = this.boids[ i ];
             this.boid.position.x = Math.random() * 400 - 200;
             this.boid.position.y = Math.random() * 400 - 200;
             this.boid.position.z = 0; //Math.random() * 400 - 200
@@ -62,16 +63,16 @@ class Simulation {
             this.boid.setAvoidWalls( true );
             this.boid.setWorldSize( 500, 500, 400 );
 
-            this.zebras.push(new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0x0000ff} ) ));
-            this.zebra = this.zebras[ i ];
+            //this.zebras.push(new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0x0000ff} ) ));
+            //this.zebra = this.zebras[ i ];
             //bird.phase = Math.floor( Math.random() * 62.83 );
-            this.scene.add( this.zebra );
+            //this.scene.add( this.zebra );
         }
 
         for ( var i = 0; i < 3; i ++ ) {
-
-            this.boids_t.push(new Leopard());
-            this.boid_t = this.boids_t[ i ];
+            this.boid_t = new Leopard(this.scene);
+            this.boids_t.add(this.boid_t);
+            //this.boid_t = this.boids_t[ i ];
             this.boid_t.position.x = Math.random() * 400 - 200;
             this.boid_t.position.y = Math.random() * 400 - 200;
             this.boid_t.position.z = 0; //Math.random() * 400 - 200
@@ -81,10 +82,10 @@ class Simulation {
             this.boid_t.setAvoidWalls( true );
             this.boid_t.setWorldSize( 500, 500, 400 );
 
-            this.tigers.push(new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0xff0000} ) ));
-            this.tiger = this.tigers[ i ];
+            //this.tigers.push(new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0xff0000} ) ));
+            //this.tiger = this.tigers[ i ];
             //bird.phase = Math.floor( Math.random() * 62.83 );
-            this.scene.add( this.tiger );
+            //this.scene.add( this.tiger );
         }
 
         this.renderer = new THREE.CanvasRenderer();
@@ -125,14 +126,16 @@ class Simulation {
     static onDocumentMouseMove( event, simulation) {
 
         let vector = new THREE.Vector3( event.clientX - simulation.SCREEN_WIDTH_HALF, - event.clientY + simulation.SCREEN_HEIGHT_HALF, 0 );
-        for ( var i = 0, il = simulation.boids.length; i < il; i++ ) {
-            simulation.boid = simulation.boids[ i ];
+        let boids = simulation.boids.values();
+        for ( var i = 0; i < boids.length; i++ ) {
+            simulation.boid = boids[ i ];
             vector.z = 0; //boid.position.z
-            simulation.boid.follow( vector);
+            simulation.boid.follow(vector);
         }
 
-        for ( var i = 0, il = simulation.boids_t.length; i < il; i++ ) {
-            simulation.boid_t = simulation.boids_t[ i ];
+        boids = simulation.boids_t.values();
+        for ( var i = 0; i < boids.length; i++ ) {
+            simulation.boid_t = boids[ i ];
             vector.z = 0; //boid.position.z
             simulation.boid_t.repulse( vector );
         }
@@ -159,13 +162,17 @@ class Simulation {
 
     render() {
 
-        for ( var i = 0, il = this.zebras.length; i < il; i++ ) {
 
-            this.boid = this.boids[ i ];
-            this.boid.run( this.boids, this.boids_t );
+        let boids = this.boids.values();
+        let boids_t = this.boids_t.values();
 
-            this.zebra = this.zebras[ i ];
-            this.zebra.position.copy( this.boids[ i ].position );
+        for ( var i = 0; i < boids.length; i++ ) {
+
+            this.boid = boids[ i ];
+            this.boid.run( boids, boids_t );
+
+            //this.zebra = this.zebras[ i ];
+            //this.zebra.position.copy( this.boids[ i ].position );
 
 
             //color = bird.material.color;
@@ -173,23 +180,23 @@ class Simulation {
             //color.r = color.g = color.b = ( 500 - bird.position.z*2 ) / 1000; //
 
             //bird.rotation.y = Math.atan2( - boid.velocity.z, boid.velocity.x );
-            this.zebra.rotation.z = Math.asin( this.boid.velocity.y / this.boid.velocity.length() );
+            //this.zebra.rotation.z = Math.asin( this.boid.velocity.y / this.boid.velocity.length() );
 
             //bird.phase = ( bird.phase + ( Math.max( 0, bird.rotation.z ) + 0.1 )  ) % 62.83;
             //.geometry.vertices[ 5 ].y = bird.geometry.vertices[ 4 ].y = Math.sin( bird.phase ) * 5;
-            this.scene.add(this.zebra);
+            //this.scene.add(this.zebra);
         }
 
-        for ( var i = 0, il = this.tigers.length; i < il; i++ ) {
-            this.boid_t = this.boids_t[ i ];
-            this.boid_t.run(this.boids);
+        for ( var i = 0; i < boids_t.length; i++ ) {
+            this.boid_t = boids_t[ i ];
+            this.boid_t.run(boids);
 
-            this.tiger = this.tigers[ i ];
-            this.tiger.position.copy( this.boids_t[ i ].position );
+            //this.tiger = this.tigers[ i ];
+            //this.tiger.position.copy( this.boids_t[ i ].position );
 
-            this.tiger.rotation.z = Math.asin( this.boid_t.velocity.y / this.boid_t.velocity.length() );
+            //this.tiger.rotation.z = Math.asin( this.boid_t.velocity.y / this.boid_t.velocity.length() );
 
-            this.scene.add(this.tiger);
+            //this.scene.add(this.tiger);
         }
 
 

@@ -1,8 +1,8 @@
 "use strict";
 
 class Leopard extends Individual {
-    constructor() {
-        super();
+    constructor(scene) {
+        super(scene);
     }
 
     action(boids, boids_t) {
@@ -10,5 +10,9 @@ class Leopard extends Individual {
         if ( Math.random() > 0.5 ) {
             this.eat( boids_zebras );
         }
+    }
+
+    build3DObject() {
+        this.element3D = new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0xff0000} ) );
     }
 }

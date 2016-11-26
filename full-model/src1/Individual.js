@@ -16,7 +16,10 @@ var avoid_wall = true;
 
 class Individual {
 
-    constructor() {
+    constructor(scene) {
+        this.scene = scene;
+        this.element3D = undefined;
+
         this.vector = new THREE.Vector3();
         this.width = 500;
         this.height = 500;
@@ -35,6 +38,10 @@ class Individual {
         this.position = new THREE.Vector3();
         this.velocity = new THREE.Vector3();
         this.acceleration = new THREE.Vector3();
+
+        // build 3d object
+        this.build3DObject();
+        this.scene.add(this.element3D);
     }
 
     setGoal( target ) {
@@ -147,6 +154,7 @@ class Individual {
 
         if(this.death_state === false) {
             this.position.add( this.velocity );
+            this.move3DObject();
         }
         this.acceleration.set( 0, 0, 0 );
     };
@@ -323,5 +331,13 @@ class Individual {
                 this.follow( steer );
             }
         }
+    }
+
+    build3DObject() {
+    }
+
+    move3DObject() {
+        this.element3D.position.copy(this.position);
+        this.element3D.rotation.z = Math.asin( this.velocity.y / this.velocity.length() );
     }
 }
