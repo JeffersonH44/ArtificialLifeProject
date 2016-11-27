@@ -3,11 +3,15 @@
 class Food extends Individual {
     constructor(config) {
         super(config);
-        this.resourceProduction = config.resourceProduction;
+        this.resourceProduction = this.baseSpeed * Utils.gaussianRandom(config.resourceProductionMean, config.resourceProductionStd);
+        this.maxProduction = Utils.gaussianRandom(config.maxResourceMean, config.maxResourceStd);
+
     }
 
     action(boids, boids_t) {
-        this.resource += 0.01;
+        if(this.resource < this.maxProduction) {
+            this.resource += this.resourceProduction;
+        }
     }
 
     build3DObject() {

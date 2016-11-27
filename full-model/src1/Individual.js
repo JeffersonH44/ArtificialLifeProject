@@ -18,22 +18,30 @@ var wall_force = 10;
 class Individual {
 
     constructor(config) {
-        this.resource = config.resource;
+        this.resource = ((config.maxEnergy - config.minEnergy) / 2) + config.minEnergy;
         this.scene = config.scene;
+
+        if(config.meanView === undefined) config.meanView = 0;
+        if(config.stdView === undefined) config.stdView = 0;
+        this.neighborhoodRadius = Utils.gaussianRandom(config.meanView, config.stdView);
+        if(config.meanEatRadius === undefined) config.meanEatRadius = 0;
+        if(config.stdEatRadius === undefined) config.stdEatRadius = 0;
+        this.eatRadius = Utils.gaussianRandom(config.meanEatRadius, config.stdEatRadius);
+        this.maxSpeed = config.maxSpeed;
+        this.maxSteerForce = config.maxSteerForce;
+        this.baseSpeed = config.baseSpeed;
+        this.metabolism = this.baseSpeed * config.metabolism;
 
         this.element3D = undefined;
 
         this.vector = new THREE.Vector3();
-        this.width = 500;
-        this.height = 500;
-        this.depth = 200;
-        this.goal = undefined;
-        this.neighborhoodRadius = zebra_vision;
-        this.maxSpeed = max_speed_zebra;
-        this.maxSteerForce = maxSt_F_zebra;
-        this.avoidWalls = avoid_wall;
+        //this.width = 500;
+        //this.height = 500;
+        //this.depth = 200;
+        //this.goal = undefined;
+        //this.avoidWalls = avoid_wall;
 
-        this.getKill_R = getKill_Radius;
+        //this.getKill_R = getKill_Radius;
 
         this.death_state = false;
         //this.stop_vector = new THREE.Vector3( 0, 0, 0 );
@@ -62,7 +70,7 @@ class Individual {
         this.depth = depth;
     }
 
-    run( boids , boids_t ) {
+    run( zebraBoids , tigerBoids, foodBoids ) {
 
         if ( this.avoidWalls ) {
 
@@ -106,7 +114,7 @@ class Individual {
         // if not death then move
         //if(this.death_state == false){
 
-        this.action(boids, boids_t);
+        this.action(zebraBoids, tigerBoids, foodBoids);
 
         //}else{
         /*
@@ -183,11 +191,18 @@ class Individual {
 
     setDeath() {
         this.death_state = true;
-        this.scene.remove(this.element3D);
     }
 
-    isDead() {
+    isDeath() {
         return this.death_state;
+    }
+
+    isRemovable() {
+        let state = this.death_state && this.resource < 0;
+        if(state) {
+            this.scene.remove(this.element3D);
+        }
+        return state;
     }
 
     repulse( target ) {
@@ -301,42 +316,16 @@ class Individual {
         return posSum;
     }
 
-    //escaping fro tigers
-    escape( boids_t ) {
-
-        let boid_t, distance;
-        let steer = new THREE.Vector3();
-        let count = 0;
-        for ( var i = 0, il = boids_t.length; i < il; i++ ) {
-            boid_t = boids_t[ i ];
-            distance = boid_t.position.distanceTo( this.position );
-
-            if ( distance > 0 && distance <= this.getKill_R ) {
-                this.setDeath();
-            }
-
-            if ( distance > 0 && this.getKill_R < distance <= this.neighborhoodRadius ) {
-                steer = boid_t.position;
-                this.repulse( steer );
-            }
-            //console.log("Dist to Tig " + distance + " vs " + getKill_R);
-            //console.log( "Death??" + this.death_state );
-        }
-    }
-
-    //Go for the zebras
-    eat( boids_zebras ) {
-
-        let boid_z, distance;
-        let steer = new THREE.Vector3();
-        let count = 0;
-        for ( var i = 0, il = boids_zebras.length; i < il; i++ ) {
-
-            boid_z = boids_zebras[ i ];
-            distance = boid_z.position.distanceTo( this.position );
-            if ( distance > 0 && distance <= this.neighborhoodRadius ) {
-                steer = boid_z.position;
-                this.follow( steer );
+    tryEat(food) {
+        for(let i = 0; i < food.length; ++i) {
+            let currentFood = food[i];
+            let distance = currentFood.position.distanceTo(this.position);
+            if(currentFood.isDeath() && currentFood.resource > 0 && distance < this.eatRadius) {
+                this.resource += this.metabolism;
+                currentFood.resource -= this.metabolism;
+                //this.acceleration.set(0, 0, 0);
+                //this.velocity.set(0, 0, 0);
+                return;
             }
         }
     }
