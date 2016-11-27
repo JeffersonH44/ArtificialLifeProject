@@ -24,13 +24,20 @@ class Individual {
         if(config.meanView === undefined) config.meanView = 0;
         if(config.stdView === undefined) config.stdView = 0;
         this.neighborhoodRadius = Utils.gaussianRandom(config.meanView, config.stdView);
+
         if(config.meanEatRadius === undefined) config.meanEatRadius = 0;
         if(config.stdEatRadius === undefined) config.stdEatRadius = 0;
         this.eatRadius = Utils.gaussianRandom(config.meanEatRadius, config.stdEatRadius);
+
+        if(config.meanEatSpeed === undefined) config.meanEatSpeed = 0;
+        if(config.stdEatSpeed === undefined) config.stdEatSpeed = 0;
+        this.eatSpeed = Utils.gaussianRandom(config.meanEatSpeed, config.stdEatSpeed);
+
         this.maxSpeed = config.maxSpeed;
         this.maxSteerForce = config.maxSteerForce;
         this.baseSpeed = config.baseSpeed;
-        this.metabolism = this.baseSpeed * config.metabolism;
+        this.metabolism *= this.baseSpeed;
+        this.eatSpeed *= this.baseSpeed;
 
         this.element3D = undefined;
 
@@ -126,6 +133,7 @@ class Individual {
         //}
         if(this.allowMove) {
             this.move();
+            //this.resource -= this.metabolism;
         }
         //console.log("catch out!" + this.velocity.x + "-" + this.velocity.y + "-" + this.velocity.z );
     }
@@ -322,8 +330,8 @@ class Individual {
             let currentFood = food[i];
             let distance = currentFood.position.distanceTo(this.position);
             if(currentFood.isDeath() && currentFood.resource > 0 && distance < this.eatRadius) {
-                this.resource += this.metabolism;
-                currentFood.resource -= this.metabolism;
+                this.resource += this.eatSpeed;
+                currentFood.resource -= this.eatSpeed;
                 this.follow(currentFood);
                 //this.acceleration.set(0, 0, 0);
                 //this.velocity.set(0, 0, 0);

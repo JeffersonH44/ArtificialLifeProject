@@ -91,7 +91,7 @@ class Simulation {
             }
         }
 
-        this.renderer = new THREE.CanvasRenderer();
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setClearColor( 0xffffff );
         this.renderer.setPixelRatio( window.devicePixelRatio );
         this.renderer.setSize( this.SCREEN_WIDTH, this.SCREEN_HEIGHT );

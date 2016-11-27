@@ -28,7 +28,9 @@ let config = {
         "maxSteerForce": 0.1,
         "pollutionProduction": 0.6,
         "meanEatRadius": 30,
-        "stdEatRadius": 5
+        "stdEatRadius": 5,
+        "meanEatSpeed": 3,
+        "stdEatSpeed": 1
     },
     "leopard": {
         "age": 12,
@@ -43,7 +45,9 @@ let config = {
         "cubeSize": 15,
         "foodRate": 0.4,
         "maxSteerForce": 0.1,
-        "pollutionProduction": 0.8
+        "pollutionProduction": 0.8,
+        "meanEatSpeed": 8,
+        "stdEatSpeed": 2
     },
     "tree": {
         "maxEnergy": 0,

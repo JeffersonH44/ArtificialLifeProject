@@ -15,7 +15,10 @@ class Zebra extends Individual {
         //Always escape from the tigers
         this.escape(tigerBoids);
         if(!this.isScaping) {
-            this.tryEat(foodNodes);
+            let value = this.tryEat(foodNodes);
+            if(value) {
+                this.allowMove = false;
+            }
         }
     }
 
