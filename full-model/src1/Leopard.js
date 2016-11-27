@@ -3,12 +3,28 @@
 class Leopard extends Individual {
     constructor(config) {
         super(config);
+        this.isEating = false;
+        this.rest = 5;
     }
 
-    action(zebrasBoids, tigerBoids) {
-        if ( Math.random() > 0.5 ) {
+    action(zebrasBoids, tigerBoids, foodBoids) {
+        if(this.isEating) {
+            let value = this.tryEat(foodBoids);
+            if(!value) {
+                this.rest -= this.baseSpeed;
+            } else {
+                this.allowMove = false;
+            }
+            if(this.rest < 0) {
+                this.isEating = false;
+                this.rest = 5;
+            }
+        }
+
+        if (!this.isEating && Math.random() > 0.5 ) {
             this.chase( zebrasBoids );
         }
+
     }
 
     chase( boids_zebras ) {
@@ -23,6 +39,8 @@ class Leopard extends Individual {
 
             if(distance < this.eatRadius) {
                 boid_z.setDeath();
+                this.isEating = true;
+                return;
             }else if( distance > 0 && distance <= this.neighborhoodRadius ) {
                 steer = boid_z.position;
                 this.follow( steer );

@@ -168,7 +168,7 @@ class Simulation {
 
         for (let i = 0; i < boids_t.length; i++ ) {
             this.boid_t = boids_t[ i ];
-            this.boid_t.run(boids);
+            this.boid_t.run(boids, undefined, boids);
         }
 
         for (let i = 0 ; i < foodNodes.length; i++) {

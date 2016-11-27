@@ -71,7 +71,7 @@ class Individual {
     }
 
     run( zebraBoids , tigerBoids, foodBoids ) {
-
+        this.allowMove = true;
         if ( this.avoidWalls ) {
 
             this.vector.set( - this.width, this.position.y, this.position.z );
@@ -124,8 +124,9 @@ class Individual {
          console.log("catch out!" + this.velocity.x + "-" + this.velocity.y + "-" + this.velocity.z );
          */
         //}
-
-        this.move();
+        if(this.allowMove) {
+            this.move();
+        }
         //console.log("catch out!" + this.velocity.x + "-" + this.velocity.y + "-" + this.velocity.z );
     }
 
@@ -323,11 +324,13 @@ class Individual {
             if(currentFood.isDeath() && currentFood.resource > 0 && distance < this.eatRadius) {
                 this.resource += this.metabolism;
                 currentFood.resource -= this.metabolism;
+                this.follow(currentFood);
                 //this.acceleration.set(0, 0, 0);
                 //this.velocity.set(0, 0, 0);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     build3DObject() {
