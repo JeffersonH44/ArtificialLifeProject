@@ -16,6 +16,8 @@ class Simulation {
         this.boid_t = undefined;
         this.foodNode = undefined;
 
+        this.initialFoodResource = 10;
+
         /*var camera, scene, renderer,
             birds, bird;
 
@@ -52,7 +54,7 @@ class Simulation {
         this.tigerBoids = new HashSet();
         this.foodNodes = new HashSet();
 
-        for ( var i = 0; i < 35; i++ ) {
+        for (let i = 0; i < 35; i++ ) {
             this.boid = new Zebra({
                 scene: this.scene,
                 resource: this.resource
@@ -74,7 +76,7 @@ class Simulation {
             //this.scene.add( this.zebra );
         }
 
-        for ( var i = 0; i < 3; i ++ ) {
+        for (let i = 0; i < 3; i ++ ) {
             this.boid_t = new Leopard({
                 scene: this.scene,
                 resource: this.resource
@@ -96,22 +98,31 @@ class Simulation {
             //this.scene.add( this.tiger );
         }
 
-        for(var i = 0; i < 40; ++i) {
-            this.foodNode = new Food({
-                scene: this.scene,
-                resource: this.resource,
-                resourceProduction: 10
-            });
-            this.foodNodes.add(this.foodNode);
-            this.foodNode.position.x = Utils.gaussianRandom(250, 50);
-            this.foodNode.position.y = Utils.gaussianRandom(250, 50);
-            this.foodNode.position.z = 0; //Math.random() * 400 - 200
-            this.foodNode.velocity.x = 0;
-            this.foodNode.velocity.y = 0;
-            this.foodNode.velocity.z = 0;
-            this.foodNode.setAvoidWalls(true);
-            this.foodNode.setWorldSize(500, 500, 400);
-            //this.foodNode.move3DObject();
+        let positions = [
+            [-175, -175], [175, 175]
+        ];
+
+        for(let i = 0 ; i < positions.length; ++i) {
+            for(let j = 0; j < 40; ++j) {
+                let x = positions[i][0];
+                let y = positions[i][1];
+                this.foodNode = new Food({
+                    scene: this.scene,
+                    resource: this.initialFoodResource,
+                    resourceProduction: 0.01
+                });
+                this.foodNodes.add(this.foodNode);
+                this.foodNode.position.x = Utils.gaussianRandom(x, 50);
+                this.foodNode.position.y = Utils.gaussianRandom(y, 50);
+                this.foodNode.position.z = 0; //Math.random() * 400 - 200
+                this.foodNode.velocity.x = 0;
+                this.foodNode.velocity.y = 0;
+                this.foodNode.velocity.z = 0;
+                this.foodNode.setAvoidWalls(true);
+                this.foodNode.setWorldSize(500, 500, 400);
+                //this.foodNode.move3DObject();
+                this.foodNode.run();
+            }
         }
 
         this.renderer = new THREE.CanvasRenderer();
@@ -155,14 +166,14 @@ class Simulation {
 
         let vector = new THREE.Vector3( event.clientX - simulation.SCREEN_WIDTH_HALF, - event.clientY + simulation.SCREEN_HEIGHT_HALF, 0 );
         let boids = simulation.zebraBoids.values();
-        for ( var i = 0; i < boids.length; i++ ) {
+        for (let i = 0; i < boids.length; i++ ) {
             simulation.boid = boids[ i ];
             vector.z = 0; //boid.position.z
             simulation.boid.follow(vector);
         }
 
         boids = simulation.tigerBoids.values();
-        for ( var i = 0; i < boids.length; i++ ) {
+        for (let i = 0; i < boids.length; i++ ) {
             simulation.boid_t = boids[ i ];
             vector.z = 0; //boid.position.z
             simulation.boid_t.repulse( vector );
@@ -189,13 +200,11 @@ class Simulation {
 
 
     render() {
-
-
         let boids = this.zebraBoids.values();
         let boids_t = this.tigerBoids.values();
         let foodNodes = this.foodNodes.values();
 
-        for ( var i = 0; i < boids.length; i++ ) {
+        for (let i = 0; i < boids.length; i++ ) {
 
             this.boid = boids[ i ];
             this.boid.run( boids, boids_t );
@@ -216,7 +225,7 @@ class Simulation {
             //this.scene.add(this.zebra);
         }
 
-        for ( var i = 0; i < boids_t.length; i++ ) {
+        for (let i = 0; i < boids_t.length; i++ ) {
             this.boid_t = boids_t[ i ];
             this.boid_t.run(boids);
 
@@ -228,20 +237,19 @@ class Simulation {
             //this.scene.add(this.tiger);
         }
 
-        for (var i = 0 ; i < foodNodes.length; i++) {
+        for (let i = 0 ; i < foodNodes.length; i++) {
             this.foodNode = foodNodes[i];
-            this.foodNode.run()
+            this.foodNode.action();
         }
 
 
 
         // loop of death
-        for ( var i = 0; i < boids.length; i++ ) {
+        for (let i = 0; i < boids.length; i++ ) {
 
             this.boid = boids[ i ];
             if(this.boid.isDead()) {
                 this.zebraBoids.remove(this.boid);
-                console.log("killed");
             }
         }
 

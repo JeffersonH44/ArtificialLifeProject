@@ -4,11 +4,10 @@ class Food extends Individual {
     constructor(config) {
         super(config);
         this.resourceProduction = config.resourceProduction;
-        this.setDeath();
     }
 
     action(boids, boids_t) {
-        this.resource += this.resourceProduction;
+        this.resource += 0.01;
     }
 
     build3DObject() {
