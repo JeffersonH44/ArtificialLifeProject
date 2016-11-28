@@ -59,8 +59,10 @@ class Individual {
         this.acceleration = new THREE.Vector3();
 
         // build 3d object
-        this.turing = new TuringSystem(128, 128, config.turing);
-        this.turing.solve(2000);
+        if(config.turing) {
+            let skins = config.turing;
+            this.turing = TuringSystem.load(skins[Utils.randomInt(0, skins.length)]);
+        }
         this.build3DObject();
         this.scene.add(this.element3D);
 

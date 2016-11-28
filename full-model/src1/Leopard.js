@@ -61,7 +61,7 @@ class Leopard extends Individual {
 
     build3DObject() {
         this.material = new THREE.MeshPhongMaterial( {
-            map: THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/tiger_skin.jpg'),
+            map: this.turing.getTexture(),//THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/tiger_skin.jpg'),
             morphTargets: true,
         });
         this.scale = 0.02;

@@ -26,7 +26,7 @@ class Zebra extends Individual {
     build3DObject() {
         // Morphs
         this.material = new THREE.MeshPhongMaterial( {
-            map: THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/zebra_skin.jpg'),
+            map: this.turing.getTexture(),//THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/zebra_skin.jpg'),
             morphTargets: true,
         });
         this.scale = 0.2;

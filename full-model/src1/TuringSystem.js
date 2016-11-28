@@ -55,7 +55,7 @@ class TuringSystem {
         let DiA, ReA, DiB, ReB;
         let height = this.rows, width = this.cols;
         let CA = this.CA, CB = this.CB;
-        this.initialize();
+        //this.initialize();
 
         // uses Euler's method to solve the diff eqns
         for( n=0; n<iterations; ++n ) {
@@ -121,9 +121,21 @@ class TuringSystem {
         let texture = new THREE.Texture(c);
 
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(0.9, 0.9);
         texture.offset.set(0, 0);
         texture.needsUpdate = true;
         return texture;
+    }
+
+    static load(file) {
+        let system = new TuringSystem(2, 2, "zebra");
+        system.Bo = file.Bo;
+        system.Bn = file.Bn;
+        system.Ao = file.Ao;
+        system.An = file.An;
+        system.rows = file.Bo.length;
+        system.cols = file.Bo[0].length;
+        system.colors = file.colors;
+        return system;
     }
 }

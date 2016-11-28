@@ -2,8 +2,8 @@
 
 let config = {
     "general": {
-        "numZebras": 3,
-        "numLeopards": 3,
+        "numZebras": 10,
+        "numLeopards": 10,
         "foodNodes": 2,
         "baseSpeed": 0.01,
         "height": 500,
@@ -13,7 +13,7 @@ let config = {
         "wallForce": 10
     },
     "zebra": {
-        "turing": "zebra",
+        "turing": zebrasSkin,
         "age": 300,
         "maxEnergy": 300,
         "minEnergy": 2,
@@ -34,7 +34,7 @@ let config = {
         "stdEatSpeed": 1
     },
     "leopard": {
-        "turing": "leopard",
+        "turing": leopardsSkin,
         "age": 12,
         "maxSpeed": 5,
         "maxEnergy": 15,
