@@ -18,6 +18,8 @@ var wall_force = 10;
 class Individual {
 
     constructor(config) {
+        this.config = config;
+
         this.scene = config.scene;
         this.mixer = config.mixer;
 
@@ -326,6 +328,10 @@ class Individual {
     }
 
     tryEat(food) {
+        if(this.resource > this.maxEnergy) {
+            return false;
+        }
+
         for(let i = 0; i < food.length; ++i) {
             let currentFood = food[i];
             let distance = currentFood.position.distanceTo(this.position);

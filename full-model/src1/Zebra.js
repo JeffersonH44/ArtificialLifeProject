@@ -18,13 +18,17 @@ class Zebra extends Individual {
         //Always escape from the tigers
         let isScaping = this.escape(tigerBoids);
         if(!isScaping) {
-            let value = this.tryEat(foodNodes);
-            //console.log(value);
-            if(value) {
-                this.allowMove = false;
-                if(this.moving) {
-                    this.mixer.clipAction( this.clip, this.element3D ).stop();
-                    this.moving = false;
+            if(this.resource > this.reproductionThreshold) {
+                this.reproduction(zebraBoids);
+            } else {
+                let value = this.tryEat(foodNodes);
+                //console.log(value);
+                if(value) {
+                    this.allowMove = false;
+                    if(this.moving) {
+                        this.mixer.clipAction( this.clip, this.element3D ).stop();
+                        this.moving = false;
+                    }
                 }
             }
         }
@@ -35,6 +39,34 @@ class Zebra extends Individual {
         }
     }
 
+    reproduce(individual) {
+        let ind = new Zebra(this.config);
+        console.log("zebra created");
+        let total = Utils.randomInt(1, 3);
+        let options = ["minEnergy", "maxEnergy", "neighborhoodRadius", "eatRadius", "eatRadius", "metabolism"];
+        let threshold = total / options.length;
+        for(let i = 0; i < options.length; ++i) {
+            let index = options[i];
+            if(Utils.random(0, 1) < threshold) {
+                ind[index] = Utils.combine(this[index], individual[index]);
+            } else {
+                ind[index] = this[index];
+            }
+        }
+        let CA = Utils.combine(this.turing.CA, individual.turing.CA);
+        let CB = Utils.combine(this.turing.CB, individual.turing.CB);
+
+        let turing = this.turing.copy(CA, CB);
+        turing.solve(100);
+        ind.turing = turing;
+        ind.position.copy(this.position);
+        ind.velocity.copy(this.velocity);
+        ind.setWorldSize(this.width, this.height, this.depth);
+        ind.build3DObject();
+        this.population.add(ind);
+        this.resource /= 4;
+    }
+
     setDeath() {
         super.setDeath();
         this.mixer.clipAction( this.clip, this.element3D ).stop();
@@ -42,6 +74,10 @@ class Zebra extends Individual {
 
     build3DObject() {
         // Morphs
+        if(this.element3D) {
+            this.scene.remove(this.element3D);
+        }
+
         this.material = new THREE.MeshPhongMaterial( {
             map: this.turing.getTexture(),//THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/zebra_skin.jpg'),
             morphTargets: true,

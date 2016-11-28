@@ -223,7 +223,7 @@ class Simulation {
 
         let boids = this.zebraBoids.values();
         let boids_t = this.tigerBoids.values();
-        console.log("leopards:", boids_t.length);
+        console.log("leopards:", boids_t.length, "zebras:", boids.length);
         let foodNodes = this.foodNodes.values();
 
         for (let i = 0; i < boids.length; i++ ) {

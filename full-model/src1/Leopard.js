@@ -7,7 +7,6 @@ class Leopard extends Individual {
         this.rest = 5;
         this.clip = undefined;
         this.moving = true;
-        this.config = config;
     }
 
     action(zebrasBoids, tigerBoids, foodBoids) {
@@ -42,7 +41,7 @@ class Leopard extends Individual {
 
     reproduce(individual) {
         let ind = new Leopard(this.config);
-        console.log("ind created");
+        console.log("Leopard created");
         let total = Utils.randomInt(1, 3);
         let options = ["minEnergy", "maxEnergy", "neighborhoodRadius", "eatRadius", "eatRadius", "metabolism"];
         let threshold = total / options.length;
@@ -58,9 +57,12 @@ class Leopard extends Individual {
         let CB = Utils.combine(this.turing.CB, individual.turing.CB);
 
         let turing = this.turing.copy(CA, CB);
-        turing.solve(100);
+        turing.solve(50);
         ind.turing = turing;
         ind.position.copy(this.position);
+        ind.velocity.copy(this.velocity);
+        ind.setWorldSize(this.width, this.height, this.depth);
+        ind.build3DObject();
         this.population.add(ind);
         this.resource /= 3;
     }
