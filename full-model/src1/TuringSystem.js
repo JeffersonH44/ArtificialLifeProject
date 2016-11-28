@@ -108,6 +108,8 @@ class TuringSystem {
     getTexture() {
         let c = document.createElement("canvas");
         let ctx = c.getContext("2d");
+        ctx.canvas.height = this.rows;
+        ctx.canvas.width = this.cols;
         //document.body.appendChild(c);
         let scale = chroma.scale(this.colors).domain(this.getLeastValues());
         for(let i = 0; i < this.rows; ++i) {
@@ -121,7 +123,7 @@ class TuringSystem {
         let texture = new THREE.Texture(c);
 
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(0.9, 0.9);
+        texture.repeat.set(1, 1);
         texture.offset.set(0, 0);
         texture.needsUpdate = true;
         return texture;
