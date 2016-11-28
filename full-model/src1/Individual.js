@@ -27,8 +27,10 @@ class Individual {
         this.minEnergy = config.minEnergy;
         this.maxEnergy = config.maxEnergy;
         this.reproductionThreshold = ((this.maxEnergy - this.minEnergy) * config.foodRate) + this.minEnergy;
-        this.population = config.population;
         this.reproductionView = config.reproductionView;
+
+        this.population = config.population;
+        this.pollution = config.pollution;
 
         if(config.meanView === undefined) config.meanView = 0;
         if(config.stdView === undefined) config.stdView = 0;
@@ -95,7 +97,18 @@ class Individual {
         this.depth = depth;
     }
 
-    run( zebraBoids , tigerBoids, foodBoids ) {
+    checkBounds() {
+
+        if ( this.position.x >   this.width ) this.position.x = - this.width;
+        if ( this.position.x < - this.width ) this.position.x =   this.width;
+        if ( this.position.y >   this.height ) this.position.y = - this.height;
+        if ( this.position.y < - this.height ) this.position.y =  this.height;
+        if ( this.position.z >  this.depth ) this.position.z = - this.depth;
+        if ( this.position.z < - this.depth ) this.position.z =  this.depth;
+
+    };
+
+    run( zebraBoids , tigerBoids, foodBoids, pollutionNodes ) {
         if(this.resource < this.minEnergy && this.metabolism) {
             this.setDeath();
         }
@@ -133,6 +146,7 @@ class Individual {
             this.vector.multiplyScalar( wall_force );
             this.acceleration.add( this.vector );
 
+            this.checkBounds();
         }/* else {
 
          this.checkBounds();
@@ -142,17 +156,11 @@ class Individual {
 
         // if not death then move
         //if(this.death_state == false){
-
+        if(pollutionNodes) {
+            this.separation(pollutionNodes);
+        }
         this.action(zebraBoids, tigerBoids, foodBoids);
 
-        //}else{
-        /*
-         this.velocity = stop_vector;
-         this._acceleration = stop_vector;
-
-         console.log("catch out!" + this.velocity.x + "-" + this.velocity.y + "-" + this.velocity.z );
-         */
-        //}
         if(this.allowMove) {
             this.move();
             this.resource -= this.metabolism;
@@ -339,12 +347,33 @@ class Individual {
                 this.resource += this.eatSpeed;
                 currentFood.resource -= this.eatSpeed;
                 this.follow(currentFood);
+                this.producePollution(this.eatSpeed);
                 //this.acceleration.set(0, 0, 0);
                 //this.velocity.set(0, 0, 0);
                 return true;
             }
         }
         return false;
+    }
+
+    producePollution(amount) {
+        let pollution = this.pollution.values();
+        for(let i = 0; i < pollution.length; ++i) {
+            let distance = pollution[i].position.distanceTo(this.position);
+            if(distance < this.eatRadius) {
+                pollution[i].resource += amount;
+                return;
+            }
+        }
+
+        let pollutionNode = new Pollution({
+            scene: this.scene
+        });
+        pollutionNode.resource = amount;
+        pollutionNode.position.copy(this.position);
+        pollutionNode.run();
+        console.log("pollution node added.");
+        this.pollution.add(pollutionNode);
     }
 
     build3DObject() {

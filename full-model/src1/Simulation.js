@@ -76,6 +76,7 @@ class Simulation {
         this.zebraBoids = new HashSet();
         this.tigerBoids = new HashSet();
         this.foodNodes = new HashSet();
+        this.pollutionNodes = new HashSet();
 
         let configs = [config.zebra, config.leopard];
         let classes = [Zebra, Leopard];
@@ -97,6 +98,7 @@ class Simulation {
             currentConfig.baseSpeed = conf.baseSpeed;
             currentConfig.mixer = this.mixer;
             currentConfig.population = boids;
+            currentConfig.pollution = this.pollutionNodes;
             for (let i = 0; i < totalIndividuals; i++ ) {
                 this.boid = new Individual(currentConfig);
                 boids.add(this.boid);
@@ -223,22 +225,28 @@ class Simulation {
 
         let boids = this.zebraBoids.values();
         let boids_t = this.tigerBoids.values();
-        console.log("leopards:", boids_t.length, "zebras:", boids.length);
+        //console.log("leopards:", boids_t.length, "zebras:", boids.length);
         let foodNodes = this.foodNodes.values();
+        let pollutionNodes = this.pollutionNodes.values();
 
         for (let i = 0; i < boids.length; i++ ) {
             this.boid = boids[ i ];
-            this.boid.run( boids, boids_t, foodNodes);
+            this.boid.run( boids, boids_t, foodNodes, pollutionNodes);
         }
 
         for (let i = 0; i < boids_t.length; i++ ) {
             this.boid_t = boids_t[ i ];
-            this.boid_t.run(boids, boids_t, boids);
+            this.boid_t.run(boids, boids_t, boids, pollutionNodes);
         }
 
         for (let i = 0 ; i < foodNodes.length; i++) {
             this.foodNode = foodNodes[i];
             this.foodNode.action();
+        }
+
+        for (let i = 0 ; i < pollutionNodes.length; i++) {
+            let pollutionNode = pollutionNodes[i];
+            pollutionNode.action();
         }
 
         // grow trees

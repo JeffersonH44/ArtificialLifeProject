@@ -2,7 +2,7 @@
 
 let config = {
     "general": {
-        "numZebras": 20,
+        "numZebras": 10,
         "numLeopards": 3,
         "foodNodes": 2,
         "baseSpeed": 0.01,
@@ -10,7 +10,7 @@ let config = {
         "width": 500,
         "depth": 400,
         "avoidWall": true,
-        "wallForce": 8
+        "wallForce": 10
     },
     "zebra": {
         "turing": zebrasSkin,
