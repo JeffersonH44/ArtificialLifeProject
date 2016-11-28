@@ -3,7 +3,7 @@
 class Zebra extends Individual {
     constructor(config) {
         super(config);
-        this.isScaping = false;
+        //this.isScaping = false;
         this.eatRadius = Utils.gaussianRandom(config.meanEatRadius, config.stdEatRadius);
         this.clip = undefined;
         this.moving = true;
@@ -12,12 +12,14 @@ class Zebra extends Individual {
     action(zebraBoids, tigerBoids, foodNodes) {
         if ( Math.random() > 0.5 ) {
             this.flock( zebraBoids );
+            this.cohesion(foodNodes);
         }
 
         //Always escape from the tigers
-        this.escape(tigerBoids);
-        if(!this.isScaping) {
+        let isScaping = this.escape(tigerBoids);
+        if(!isScaping) {
             let value = this.tryEat(foodNodes);
+            //console.log(value);
             if(value) {
                 this.allowMove = false;
                 if(this.moving) {
@@ -25,7 +27,8 @@ class Zebra extends Individual {
                     this.moving = false;
                 }
             }
-        } else if(!this.moving){
+        }
+        if(!this.moving){
             this.mixer.clipAction(this.clip, this.element3D).setDuration(1)
                 .startAt(-1 * Math.random()).play();
             this.moving = true;
@@ -95,7 +98,7 @@ class Zebra extends Individual {
 
         let boid_t, distance;
         let steer = new THREE.Vector3();
-        this.isScaping = false;
+        let isScaping = false;
         for (let i = 0, il = boids_t.length; i < il; i++ ) {
             boid_t = boids_t[ i ];
             distance = boid_t.position.distanceTo( this.position );
@@ -103,9 +106,10 @@ class Zebra extends Individual {
             if ( distance > 0 && distance <= this.neighborhoodRadius ) {
                 steer = boid_t.position;
                 this.repulse( steer );
-                this.isScaping = true;
+                isScaping = true;
             }
         }
+        return isScaping;
     }
 
     move3DObject() {

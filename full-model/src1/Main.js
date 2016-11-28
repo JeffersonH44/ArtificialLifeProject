@@ -2,15 +2,15 @@
 
 let config = {
     "general": {
-        "numZebras": 10,
-        "numLeopards": 10,
+        "numZebras": 20,
+        "numLeopards": 3,
         "foodNodes": 2,
         "baseSpeed": 0.01,
         "height": 500,
         "width": 500,
         "depth": 400,
         "avoidWall": true,
-        "wallForce": 10
+        "wallForce": 8
     },
     "zebra": {
         "turing": zebrasSkin,
@@ -18,7 +18,7 @@ let config = {
         "maxEnergy": 300,
         "minEnergy": 2,
         "maxSpeed": 4,
-        "metabolism": 1,
+        "metabolism": 5,
         "meanView": 100,
         "stdView": 20,
         "cubeSize": 15,
@@ -30,14 +30,15 @@ let config = {
         "pollutionProduction": 0.6,
         "meanEatRadius": 30,
         "stdEatRadius": 5,
-        "meanEatSpeed": 3,
-        "stdEatSpeed": 1
+        "meanEatSpeed": 10,
+        "stdEatSpeed": 1,
+        "reproductionView": 30
     },
     "leopard": {
         "turing": leopardsSkin,
         "age": 12,
         "maxSpeed": 5,
-        "maxEnergy": 15,
+        "maxEnergy": 30,
         "minEnergy": 2,
         "metabolism": 4,
         "meanView": 200,
@@ -45,14 +46,15 @@ let config = {
         "meanEatRadius": 30,
         "stdEatRadius": 5,
         "cubeSize": 15,
-        "foodRate": 0.4,
+        "foodRate": 0.6,
         "maxSteerForce": 0.1,
         "pollutionProduction": 0.8,
         "meanEatSpeed": 8,
-        "stdEatSpeed": 2
+        "stdEatSpeed": 2,
+        "reproductionView": 30
     },
     "tree": {
-        "maxEnergy": 0,
+        "maxEnergy": 30,
         "minEnergy": 0,
         "resourceProductionMean": 3,
         "resourceProductionStd": 1,

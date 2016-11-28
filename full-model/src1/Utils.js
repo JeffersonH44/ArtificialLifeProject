@@ -36,4 +36,12 @@ class Utils {
     static random(min, max) {
         return Math.random()*(max-min)+min;
     }
+
+    static combine(attr1, attr2) {
+        let c = Utils.random(0, 1);
+        let c1 = 1 - c;
+        let value = attr1 * c + attr2 * c1;
+        value = Utils.gaussianRandom(value, 1);
+        return value;
+    }
 }

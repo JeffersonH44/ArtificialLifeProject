@@ -5,8 +5,22 @@ function createMatrix(rows, cols) {
     for(let i = 0; i < rows; ++i) {
         result[i] = new Array(cols);
     }
-
     return result;
+}
+
+function copyMatrix(mat) {
+    let rows = mat.length;
+    let cols = mat[0].length;
+
+    let res = new Array(cols);
+    for(let i = 0; i < rows; ++i) {
+        res[i] = new Array(cols);
+        for(let j = 0; j < cols; ++j) {
+            res[i][j] = mat[i][j];
+        }
+    }
+
+    return res;
 }
 
 class TuringSystem {
@@ -48,6 +62,22 @@ class TuringSystem {
         temp = this.Bo;
         this.Bo = this.Bn;
         this.Bn = temp;
+    }
+
+    copy(CA, CB) {
+        let copy = new TuringSystem(1, 1, "zebra");
+        copy.Ao = copyMatrix(this.Ao);
+        copy.An = copyMatrix(this.An);
+        copy.Bo = copyMatrix(this.Bo);
+        copy.Bn = copyMatrix(this.Bn);
+
+        copy.rows = this.rows;
+        copy.cols = this.cols;
+        copy.colors = this.colors;
+        copy.CA = CA;
+        copy.CB = CB;
+
+        return copy;
     }
 
     solve(iterations) {

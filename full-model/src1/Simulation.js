@@ -45,7 +45,8 @@ class Simulation {
 
     }
 
-    init(config) {
+    init(config, trees3D) {
+        trees3D = trees3D || this.trees3D;
         let conf = config.general;
         console.log("init!");
 
@@ -95,8 +96,8 @@ class Simulation {
             currentConfig.scene = this.scene;
             currentConfig.baseSpeed = conf.baseSpeed;
             currentConfig.mixer = this.mixer;
+            currentConfig.population = boids;
             for (let i = 0; i < totalIndividuals; i++ ) {
-                console.log("hi!");
                 this.boid = new Individual(currentConfig);
                 boids.add(this.boid);
                 this.boid.position.x = Utils.randomInt(startX, endX);
@@ -110,16 +111,29 @@ class Simulation {
             }
         }
 
+        // trees config
         let positions = [
             [-175, -175], [175, 175]
         ];
+        this.trees3D = new Array(positions.length);
+        this.nTimes = 1;
+        this.deltaSum = 0;
+
+        this.timeRate = 0.5;
+        this.timeCounter = this.timeRate / 0.02;
+        this.growRate = 1;
+
         config.tree.scene = this.scene;
         config.tree.baseSpeed = conf.baseSpeed;
 
         for(let i = 0 ; i < positions.length; ++i) {
+            let x = positions[i][0];
+            let y = positions[i][1];
+            this.trees3D[i] = new treeGenerator(x, y, 0, Utils.randomInt(4, 6), this.scene);
+            this.trees3D[i].growing(this.nTimes);
+            this.scene.add(this.trees3D[i].output_obj[0]);
+            this.scene.add(this.trees3D[i].output_obj[1]);
             for(let j = 0; j < 40; ++j) {
-                let x = positions[i][0];
-                let y = positions[i][1];
                 this.foodNode = new Food(config.tree);
                 this.foodNodes.add(this.foodNode);
                 this.foodNode.position.x = Utils.gaussianRandom(x, 50);
@@ -209,6 +223,7 @@ class Simulation {
 
         let boids = this.zebraBoids.values();
         let boids_t = this.tigerBoids.values();
+        console.log("leopards:", boids_t.length);
         let foodNodes = this.foodNodes.values();
 
         for (let i = 0; i < boids.length; i++ ) {
@@ -218,7 +233,7 @@ class Simulation {
 
         for (let i = 0; i < boids_t.length; i++ ) {
             this.boid_t = boids_t[ i ];
-            this.boid_t.run(boids, undefined, boids);
+            this.boid_t.run(boids, boids_t, boids);
         }
 
         for (let i = 0 ; i < foodNodes.length; i++) {
@@ -226,14 +241,30 @@ class Simulation {
             this.foodNode.action();
         }
 
+        // grow trees
+        this.deltaSum += 1;
+        if(this.deltaSum % this.timeCounter === 0) {
+            this.nTimes += this.growRate;
+            for(let i = 0; i < this.trees3D.length; ++i) {
+                this.trees3D[i].growing(this.nTimes);
+                this.scene.add(this.trees3D[i].output_obj[0]);
+                this.scene.add(this.trees3D[i].output_obj[1]);
+            }
+        }
 
 
         // loop of death
         for (let i = 0; i < boids.length; i++ ) {
-
             this.boid = boids[ i ];
             if(this.boid.isRemovable()) {
                 this.zebraBoids.remove(this.boid);
+            }
+        }
+
+        for(let i = 0; i < boids_t.length; ++i) {
+            this.boid = boids_t[i];
+            if(this.boid.isRemovable()) {
+                this.tigerBoids.remove(this.boid);
             }
         }
 

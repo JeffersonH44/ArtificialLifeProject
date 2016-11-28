@@ -18,9 +18,15 @@ var wall_force = 10;
 class Individual {
 
     constructor(config) {
-        this.resource = ((config.maxEnergy - config.minEnergy) / 2) + config.minEnergy;
         this.scene = config.scene;
         this.mixer = config.mixer;
+
+        this.resource = ((config.maxEnergy - config.minEnergy) / 2) + config.minEnergy;
+        this.minEnergy = config.minEnergy;
+        this.maxEnergy = config.maxEnergy;
+        this.reproductionThreshold = ((this.maxEnergy - this.minEnergy) * config.foodRate) + this.minEnergy;
+        this.population = config.population;
+        this.reproductionView = config.reproductionView;
 
         if(config.meanView === undefined) config.meanView = 0;
         if(config.stdView === undefined) config.stdView = 0;
@@ -34,10 +40,12 @@ class Individual {
         if(config.stdEatSpeed === undefined) config.stdEatSpeed = 0;
         this.eatSpeed = Utils.gaussianRandom(config.meanEatSpeed, config.stdEatSpeed);
 
-        this.maxSpeed = config.maxSpeed;
+        if(config.maxSpeed === undefined) config.maxSpeed = 0.0;
+        this.maxSpeed = Utils.gaussianRandom(config.maxSpeed, 0.2);
         this.maxSteerForce = config.maxSteerForce;
         this.baseSpeed = config.baseSpeed;
-        this.metabolism *= this.baseSpeed;
+
+        this.metabolism = config.metabolism ? Utils.gaussianRandom(config.metabolism, 0.2) * this.baseSpeed : 0;
         this.eatSpeed *= this.baseSpeed;
 
         this.element3D = undefined;
@@ -86,6 +94,10 @@ class Individual {
     }
 
     run( zebraBoids , tigerBoids, foodBoids ) {
+        if(this.resource < this.minEnergy && this.metabolism) {
+            this.setDeath();
+        }
+
         this.allowMove = true;
         if ( this.avoidWalls ) {
 
@@ -141,12 +153,12 @@ class Individual {
         //}
         if(this.allowMove) {
             this.move();
-            //this.resource -= this.metabolism;
+            this.resource -= this.metabolism;
         }
         //console.log("catch out!" + this.velocity.x + "-" + this.velocity.y + "-" + this.velocity.z );
     }
 
-    action(boids, boids_t) {
+    action(zebraBoids, tigerBoids, foodNodes) {
         console.log("uninplemented yet!");
     }
 
@@ -164,17 +176,8 @@ class Individual {
 
     move() {
 
-        /*
-         if(this.death_state == true){
-         this.velocity = stop_vector;
-         this._acceleration = stop_vector;
-         }else{
-
-         }
-         */
-
         this.velocity.add( this.acceleration );
-        var l = this.velocity.length();
+        let l = this.velocity.length();
 
         if ( l > this.maxSpeed ) {
             this.velocity.divideScalar( l / this.maxSpeed );
@@ -186,17 +189,6 @@ class Individual {
         }
         this.acceleration.set( 0, 0, 0 );
     };
-
-    /*this.checkBounds = function () {
-        if ( this.position.x >   _width ) this.position.x = - _width;
-        if ( this.position.x < - _width ) this.position.x =   _width;
-        if ( this.position.y >   _height ) this.position.y = - _height;
-        if ( this.position.y < - _height ) this.position.y =  _height;
-        if ( this.position.z >  _depth ) this.position.z = - _depth;
-        if ( this.position.z < - _depth ) this.position.z =  _depth;
-    };*/
-
-    //
 
     avoid( target ) {
         let steer = new THREE.Vector3();
@@ -215,7 +207,7 @@ class Individual {
     }
 
     isRemovable() {
-        let state = this.death_state && this.resource < 0;
+        let state = this.death_state && this.resource < this.minEnergy;
         if(state) {
             this.scene.remove(this.element3D);
         }
@@ -240,7 +232,7 @@ class Individual {
 
         let distance = this.position.distanceTo( target );
 
-        if ( distance < 500 ) {
+        if ( distance < this.neighborhoodRadius ) {
             let steer = new THREE.Vector3();
             steer.subVectors( target, this.position ); //this.position, target
             steer.multiplyScalar( 0.5 / distance ); //0.5 / distance
@@ -288,7 +280,7 @@ class Individual {
             steer = new THREE.Vector3(),
             count = 0;
 
-        for ( var i = 0, il = boids.length; i < il; i ++ ) {
+        for ( let i = 0, il = boids.length; i < il; i ++ ) {
             if ( Math.random() > 0.6 ) continue;
 
             boid = boids[ i ];
@@ -317,7 +309,7 @@ class Individual {
             posSum = new THREE.Vector3(),
             repulse = new THREE.Vector3();
 
-        for ( var i = 0, il = boids.length; i < il; i ++ ) {
+        for ( let i = 0, il = boids.length; i < il; i ++ ) {
             if ( Math.random() > 0.6 ) continue;
 
             boid = boids[ i ];
@@ -350,6 +342,19 @@ class Individual {
     }
 
     build3DObject() {
+    }
+
+    reproduction(individuals) {
+        for(let i = 0 ; i < individuals.length; ++i) {
+            let ind = individuals[i];
+            let distance = ind.position.distanceTo(this.position);
+            if(distance < this.reproductionView) {
+                this.reproduce(ind);
+                return;
+            } else {
+                this.follow(ind);
+            }
+        }
     }
 
     move3DObject() {
