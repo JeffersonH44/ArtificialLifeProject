@@ -19,6 +19,30 @@ class Simulation {
         this.initialFoodResource = 10;
         this.stats = new Stats();
         document.getElementById( 'container' ).appendChild(this.stats.dom);
+
+        // for animation
+        this.light = undefined;
+        this.clock = new THREE.Clock();
+
+        this.mixer = undefined;
+        this.vX = new THREE.Vector3(1,0,0); //vector X
+        this.vY = new THREE.Vector3(0,1,0); //vector Y
+        this.vZ = new THREE.Vector3(0,0,1); //vector Z
+
+        //For orientation
+        this.angle_to_rotate = undefined;
+        this.vel_angle = undefined;
+        this.zebra_angle = undefined;
+        this.tiger_angle = undefined;
+
+        this.angle_old = undefined; // old angle
+        this.vel_old_angle = undefined;
+        this.angle_difference = undefined;
+
+        //Grass
+        this.geometryGrass = new THREE.BoxGeometry(1000,1000,1);
+        this.materialGrass  = new THREE.MeshPhongMaterial({ map: THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/terrain/grasslight-big.jpg') });
+
     }
 
     init(config) {
@@ -29,6 +53,24 @@ class Simulation {
         this.camera.position.z = 450;
 
         this.scene = new THREE.Scene();
+
+        // lights
+        this.ambient = new THREE.AmbientLight( 0x444444 );
+        this.scene.add(this.ambient);
+
+        this.light = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2 );
+        this.light.position.set( 0, 1500, 1000 );
+        this.light.target.position.set( 0, 0, 0 );
+
+        this.light.castShadow = true;
+        this.scene.add( this.light );
+
+        this.grass = new THREE.Mesh(this.geometryGrass, this.materialGrass);
+        this.scene.add(this.grass);
+
+        //For the default animation of the mesh ****
+        //For the clip animation of the animal
+        this.mixer = new THREE.AnimationMixer(this.scene);
 
         this.zebraBoids = new HashSet();
         this.tigerBoids = new HashSet();
@@ -52,7 +94,9 @@ class Simulation {
 
             currentConfig.scene = this.scene;
             currentConfig.baseSpeed = conf.baseSpeed;
+            currentConfig.mixer = this.mixer;
             for (let i = 0; i < totalIndividuals; i++ ) {
+                console.log("hi!");
                 this.boid = new Individual(currentConfig);
                 boids.add(this.boid);
                 this.boid.position.x = Utils.randomInt(startX, endX);
@@ -91,7 +135,10 @@ class Simulation {
             }
         }
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            width: 1024
+        });
         this.renderer.setClearColor( 0xffffff );
         this.renderer.setPixelRatio( window.devicePixelRatio );
         this.renderer.setSize( this.SCREEN_WIDTH, this.SCREEN_HEIGHT );
@@ -157,6 +204,9 @@ class Simulation {
     }
 
     render() {
+        let delta =  this.clock.getDelta();
+        this.mixer.update(delta);
+
         let boids = this.zebraBoids.values();
         let boids_t = this.tigerBoids.values();
         let foodNodes = this.foodNodes.values();
@@ -188,7 +238,7 @@ class Simulation {
         }
 
         //console.log( "Death?? 1=" + zebraBoids[0].death_state + "  2= " + zebraBoids[1].death_state );
-
+        this.renderer.clear();
         this.renderer.render( this.scene, this.camera );
     }
 }

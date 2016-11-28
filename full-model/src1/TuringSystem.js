@@ -1,8 +1,8 @@
 'use strict';
 
 function createMatrix(rows, cols) {
-    var result = new Array(rows);
-    for(var i = 0; i < rows; ++i) {
+    let result = new Array(rows);
+    for(let i = 0; i < rows; ++i) {
         result[i] = new Array(cols);
     }
 
@@ -10,7 +10,7 @@ function createMatrix(rows, cols) {
 }
 
 class TuringSystem {
-    constructor(rows, cols, CA, CB) {
+    constructor(rows, cols, animal) {
         this.Ao = createMatrix(rows, cols);
         this.An = createMatrix(rows, cols);
         this.Bo = createMatrix(rows, cols);
@@ -18,15 +18,23 @@ class TuringSystem {
 
         this.rows = rows;
         this.cols = cols;
-        this.CA = CA;
-        this.CB = CB;
+        if(animal === "zebra") {
+            this.CA = Utils.gaussianRandom(2.0, 0.1);
+            this.CB = Utils.gaussianRandom(24.0, 0.1);
+            this.colors = ["white", "black"];
+        } else if(animal === "leopard") {
+            this.CA = Utils.gaussianRandom(3.5, 0.3);
+            this.CB = Utils.gaussianRandom(16.0, 0.3);
+            this.colors = ["yellow", "black"];
+        }
     }
 
     initialize() {
-        for(var i = 0; i < this.rows; ++i) {
-            for(var j = 0 ; j < this.cols; ++j) {
-                this.Ao[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
-                this.Bo[i][j] = Utils.randomInt(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
+        for(let i = 0; i < this.rows; ++i) {
+            for(let j = 0 ; j < this.cols; ++j) {
+                // tirano opresor de Daniel (no lo voy a borrar)
+                this.Ao[i][j] = Utils.random(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
+                this.Bo[i][j] = Utils.random(0, 1) * 12.0 + Utils.gaussianRandom(0, 1) * 2.0;
                 this.An[i][j] = 0.0;
                 this.Bn[i][j] = 0.0;
             }
@@ -34,7 +42,7 @@ class TuringSystem {
     }
 
     swapBuffers() {
-        var temp = this.Ao;
+        let temp = this.Ao;
         this.Ao = this.An;
         this.An = temp;
         temp = this.Bo;
@@ -83,53 +91,13 @@ class TuringSystem {
             // Swap Ao for An, Bo for Bn
             this.swapBuffers();
         }
-        console.log(this.An);
-        console.log(this.Bn);
-
-        /*var DiA = 0.0, ReA = 0.0, DiB = 0.0, ReB = 0.0;
-
-        this.initialize();
-        for(var k = 0; k < iterations; ++k) {
-            for(var i = 0; i < this.rows; ++i) {
-                // treat the surface as a torus by wrapping at the edges
-                var iPlus1 = i + 1;
-                var iMinus1 = i - 1;
-                if (i == 0) iMinus1 = this.rows - 1;
-                if (i == this.rows - 1) iPlus1 = 0;
-
-                for (var j = 0; j < this.cols; ++j) {
-                    //if(i == 0 && j == 0) console.log(this.An[i][j]);
-                    var jPlus1 = j + 1;
-                    var jMinus1 = j - 1;
-                    if (j == 0) jMinus1 = this.cols - 1;
-                    if (j == this.cols - 1) jPlus1 = 0;
-
-                    // Component A
-                    DiA = this.CA * ( this.Ao[iPlus1][j] - 2.0 * this.Ao[i][j] + this.Ao[iMinus1][j]
-                        + this.Ao[i][jPlus1] - 2.0 * this.Ao[i][j] + this.Ao[i][jMinus1] );
-                    ReA = this.Ao[i][j] * this.Bo[i][j] - this.Ao[i][j] - 12.0;
-                    this.An[i][j] = this.Ao[i][j] + 0.01 * (ReA + DiA);
-                    if (this.An[i][j] < 0.0) this.An[i][j] = 0.0;
-
-                    // Component B
-                    DiB = this.CB * ( this.Bo[iPlus1][j] - 2.0 * this.Bo[i][j] + this.Bo[iMinus1][j]
-                        + this.Bo[i][jPlus1] - 2.0 * this.Bo[i][j] + this.Bo[i][jMinus1] );
-                    ReB = 16.0 - this.Ao[i][j] * this.Bo[i][j];
-                    this.Bn[i][j] = this.Bo[i][j] + 0.01 * (ReB + DiB);
-                    if (this.Bn[i][j] < 0.0) this.Bn[i][j] = 0.0;
-                }
-            }
-
-            this.swapBuffers();
-        }
-        console.log(this.An);*/
     }
 
     getLeastValues() {
-        var min = Number.POSITIVE_INFINITY;
-        var max = Number.NEGATIVE_INFINITY;
-        for(var i = 0; i < this.An.length; ++i) {
-            for(var j = 0; j < this.Bn[0].length; ++j) {
+        let min = Number.POSITIVE_INFINITY;
+        let max = Number.NEGATIVE_INFINITY;
+        for(let i = 0; i < this.An.length; ++i) {
+            for(let j = 0; j < this.Bn[0].length; ++j) {
                 min = Math.min(min, this.Bn[i][j]);
                 max = Math.max(max, this.Bn[i][j]);
             }
@@ -137,13 +105,25 @@ class TuringSystem {
         return [min, max];
     }
 
-    fillContext(ctx, scale) {
-        for(var i = 0; i < this.rows; ++i) {
-            for(var j = 0; j < this.cols; ++j) {
-                var a = this.An[i][j], b = this.Bn[i][j];
+    getTexture() {
+        let c = document.createElement("canvas");
+        let ctx = c.getContext("2d");
+        //document.body.appendChild(c);
+        let scale = chroma.scale(this.colors).domain(this.getLeastValues());
+        for(let i = 0; i < this.rows; ++i) {
+            for(let j = 0; j < this.cols; ++j) {
+                let a = this.An[i][j], b = this.Bn[i][j];
                 ctx.fillStyle = scale(-a + b);
                 ctx.fillRect(i, j, 1, 1);
             }
         }
+
+        let texture = new THREE.Texture(c);
+
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(1, 1);
+        texture.offset.set(0, 0);
+        texture.needsUpdate = true;
+        return texture;
     }
 }

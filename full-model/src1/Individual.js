@@ -20,6 +20,7 @@ class Individual {
     constructor(config) {
         this.resource = ((config.maxEnergy - config.minEnergy) / 2) + config.minEnergy;
         this.scene = config.scene;
+        this.mixer = config.mixer;
 
         if(config.meanView === undefined) config.meanView = 0;
         if(config.stdView === undefined) config.stdView = 0;
@@ -58,8 +59,13 @@ class Individual {
         this.acceleration = new THREE.Vector3();
 
         // build 3d object
+        this.turing = new TuringSystem(128, 128, config.turing);
+        this.turing.solve(2000);
         this.build3DObject();
         this.scene.add(this.element3D);
+
+        // for animation
+        this.oldVelocity = new THREE.Vector3();
     }
 
     setGoal( target ) {

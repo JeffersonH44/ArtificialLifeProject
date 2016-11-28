@@ -2,7 +2,7 @@
 
 let config = {
     "general": {
-        "numZebras": 35,
+        "numZebras": 3,
         "numLeopards": 3,
         "foodNodes": 2,
         "baseSpeed": 0.01,
@@ -13,6 +13,7 @@ let config = {
         "wallForce": 10
     },
     "zebra": {
+        "turing": "zebra",
         "age": 300,
         "maxEnergy": 300,
         "minEnergy": 2,
@@ -33,6 +34,7 @@ let config = {
         "stdEatSpeed": 1
     },
     "leopard": {
+        "turing": "leopard",
         "age": 12,
         "maxSpeed": 5,
         "maxEnergy": 15,
@@ -64,12 +66,12 @@ let config = {
 let sim = new Simulation();
 sim.init(config);
 
-document.addEventListener( 'mousemove', function (event) {
+/*document.addEventListener( 'mousemove', function (event) {
     Simulation.onDocumentMouseMove(event, sim);
 }, false );
 
 window.addEventListener( 'resize', function () {
     Simulation.onWindowResize(sim);
-}, false );
+}, false );*/
 
 Simulation.StartSimulation(sim);

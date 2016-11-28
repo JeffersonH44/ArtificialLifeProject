@@ -5,6 +5,7 @@ class Zebra extends Individual {
         super(config);
         this.isScaping = false;
         this.eatRadius = Utils.gaussianRandom(config.meanEatRadius, config.stdEatRadius);
+        this.clip = undefined;
     }
 
     action(zebraBoids, tigerBoids, foodNodes) {
@@ -23,7 +24,56 @@ class Zebra extends Individual {
     }
 
     build3DObject() {
-        this.element3D = new THREE.Mesh( new THREE.BoxGeometry(8,8,8), new THREE.MeshBasicMaterial( { color:0x0000ff} ) );
+        // Morphs
+        this.material = new THREE.MeshPhongMaterial( {
+            map: THREE.ImageUtils.loadTexture('lib/three.js-master/examples/textures/zebra_skin.jpg'),
+            morphTargets: true,
+        });
+        this.scale = 0.2;
+
+        this.sceneList = {
+            objectScale: new THREE.Vector3(this.scale, this.scale, this.scale),
+            objectRotation: new THREE.Euler(Math.PI/2,  Math.PI/2, 0)
+        };
+
+        function createMorph(individual) {
+            function addMorph( geometry, speed, duration, individual) {
+
+                let mesh = new THREE.Mesh(geometry, individual.material);
+
+                //Animatining the mesh with the default animation ****
+                mesh.speed = speed;
+
+                let clip = geometry.animations[ 0 ];
+                individual.clip = clip;
+                // set duration to shift the playback out of face
+                individual.mixer.clipAction( clip, mesh ).setDuration(duration )
+                    .startAt( - duration * Math.random() ).play();
+
+
+                //Location and Orientation of the meshes
+                mesh.position.set( individual.position.x, individual.position.y, individual.position.z );
+
+                mesh.scale.copy(individual.sceneList.objectScale);
+
+                mesh.rotation.copy(individual.sceneList.objectRotation);
+
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                individual.scene.add( mesh );
+
+                individual.element3D = mesh;
+            }
+
+
+            let loader = new THREE.JSONLoader();
+            loader.load( "models/horse.js", function( geometry ) {
+                addMorph( geometry, 400, 1, individual);
+            });
+        }
+
+        createMorph(this);
     }
 
     //escaping from tigers
@@ -42,5 +92,20 @@ class Zebra extends Individual {
                 this.isScaping = true;
             }
         }
+    }
+
+    move3DObject() {
+        this.element3D.position.copy(this.position);
+        let direction = new THREE.Vector3();
+        this.element3D.getWorldDirection(direction);
+
+        //
+        let indAngle = Math.atan2( direction.z , direction.x );
+        let velAngle = Math.atan2( this.velocity.y , this.velocity.x );
+        let velOldAngle = Math.atan2( this.oldVelocity.y , this.oldVelocity.x );
+        let angleDifference = velAngle + velOldAngle;
+
+        this.element3D.rotation.y = (angleDifference / 2) + (Math.PI / 2);
+        this.oldVelocity = this.velocity;
     }
 }

@@ -1,11 +1,8 @@
 'use strict';
 
-var morph = new TuringSystem(200, 200, 2.0, 24.0);
-morph.solve();
-var least = morph.getLeastValues();
+// 2.0 24.0
+// 3.5 16.0
 
-var scale = chroma.scale(['black', 'yellow']).domain(least);
-var c =  document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
-
-morph.fillContext(ctx, scale);
+var morph = new TuringSystem(128, 128, "zebra");
+morph.solve(2500);
+morph.getTexture();
