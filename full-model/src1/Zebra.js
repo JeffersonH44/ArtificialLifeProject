@@ -6,6 +6,7 @@ class Zebra extends Individual {
         this.isScaping = false;
         this.eatRadius = Utils.gaussianRandom(config.meanEatRadius, config.stdEatRadius);
         this.clip = undefined;
+        this.moving = true;
     }
 
     action(zebraBoids, tigerBoids, foodNodes) {
@@ -19,8 +20,21 @@ class Zebra extends Individual {
             let value = this.tryEat(foodNodes);
             if(value) {
                 this.allowMove = false;
+                if(this.moving) {
+                    this.mixer.clipAction( this.clip, this.element3D ).stop();
+                    this.moving = false;
+                }
             }
+        } else if(!this.moving){
+            this.mixer.clipAction(this.clip, this.element3D).setDuration(1)
+                .startAt(-1 * Math.random()).play();
+            this.moving = true;
         }
+    }
+
+    setDeath() {
+        super.setDeath();
+        this.mixer.clipAction( this.clip, this.element3D ).stop();
     }
 
     build3DObject() {
